@@ -1,0 +1,7 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="AcousticVision.Views.TestModelsView">
+
+    <TextBlock Text="Раздел: Тестовые модели" FontSize="18"/>
+
+</UserControl>

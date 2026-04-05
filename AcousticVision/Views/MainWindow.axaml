@@ -1,0 +1,62 @@
+<Window
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:AcousticVision.ViewModels"
+    xmlns:views="using:AcousticVision.Views"
+    x:Class="AcousticVision.Views.MainWindow"
+    x:DataType="vm:MainWindowViewModel"
+    Title="AcousticVision"
+    Width="1200"
+    Height="750">
+
+    <Window.DataTemplates>
+        <DataTemplate DataType="vm:OverviewViewModel">
+            <views:OverviewView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:RoomsViewModel">
+            <views:RoomsView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:MaterialsViewModel">
+            <views:MaterialsView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:SourcesViewModel">
+            <views:SourcesView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:ReceiversViewModel">
+            <views:ReceiversView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:TestModelsViewModel">
+            <views:TestModelsView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:AnalysisViewModel">
+            <views:AnalysisView/>
+        </DataTemplate>
+    </Window.DataTemplates>
+
+    <Grid ColumnDefinitions="250,*" RowDefinitions="Auto,*">
+
+        <Border Grid.ColumnSpan="2" Background="#1F2937" Padding="15">
+            <TextBlock Text="AcousticVision"
+                       Foreground="White"
+                       FontSize="22"
+                       FontWeight="Bold"/>
+        </Border>
+
+        <Border Grid.Row="1" Background="#111827" Padding="10">
+            <StackPanel Spacing="8">
+                <Button Content="Обзор" Command="{Binding ShowOverviewCommand}"/>
+                <Button Content="Помещения" Command="{Binding ShowRoomsCommand}"/>
+                <Button Content="Материалы" Command="{Binding ShowMaterialsCommand}"/>
+                <Button Content="Источники" Command="{Binding ShowSourcesCommand}"/>
+                <Button Content="Приёмники" Command="{Binding ShowReceiversCommand}"/>
+                <Button Content="Тест-модели" Command="{Binding ShowTestModelsCommand}"/>
+                <Button Content="Анализ" Command="{Binding ShowAnalysisCommand}"/>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Column="1" Grid.Row="1" Padding="20">
+            <ContentControl Content="{Binding CurrentViewModel}"/>
+        </Border>
+
+    </Grid>
+</Window>

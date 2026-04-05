@@ -1,0 +1,11 @@
+using Avalonia.Controls;
+
+namespace AcousticVision.Views;
+
+public partial class AnalysisView : UserControl
+{
+    public AnalysisView()
+    {
+        InitializeComponent();
+    }
+}
