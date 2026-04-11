@@ -9,7 +9,10 @@ public class AnalysisService
 {
     private readonly AppDbContext _dbContext;
 
-    public AnalysisService(AppDbContext dbContext) => _dbContext = dbContext;
+    public AnalysisService(AppDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
 
     public async Task<AnalysisResult> AnalyzeAsync(int testModelId)
     {
@@ -19,12 +22,20 @@ public class AnalysisService
             .Include(x => x.Receiver)
             .FirstOrDefaultAsync(x => x.Id == testModelId);
 
-        if (testModel is null) return Fail("Тестовая модель не найдена.");
-        if (testModel.Room is null) return Fail("У тестовой модели отсутствует помещение.");
-        if (testModel.Source is null) return Fail("У тестовой модели отсутствует источник звука.");
-        if (testModel.Receiver is null) return Fail("У тестовой модели отсутствует приёмник звука.");
+        if (testModel is null)
+            return Fail("Тестовая модель не найдена.");
+
+        if (testModel.Room is null)
+            return Fail("У тестовой модели отсутствует помещение.");
+
+        if (testModel.Source is null)
+            return Fail("У тестовой модели отсутствует источник звука.");
+
+        if (testModel.Receiver is null)
+            return Fail("У тестовой модели отсутствует приёмник звука.");
 
         var room = testModel.Room;
+
         if (room.Length <= 0 || room.Width <= 0 || room.Height <= 0)
             return Fail("Размеры помещения должны быть больше нуля.");
 
@@ -42,6 +53,7 @@ public class AnalysisService
 
         var surfaces = await _dbContext.RoomSurfaces
             .Include(x => x.Material)
+            .Include(x => x.Texture)
             .Where(x => x.RoomId == room.Id)
             .ToListAsync();
 
@@ -49,27 +61,54 @@ public class AnalysisService
             return Fail("Для помещения не заданы поверхности. Сначала заполните раздел «Поверхности помещения».");
 
         var requiredPositions = new[] { "floor", "ceiling", "north", "south", "east", "west" };
-        var existingPositions = surfaces.Select(x => x.Position.Trim().ToLowerInvariant()).Distinct().ToList();
-        var missingPositions = requiredPositions.Where(x => !existingPositions.Contains(x)).ToList();
+
+        var existingPositions = surfaces
+            .Select(x => x.Position?.Trim().ToLowerInvariant())
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Distinct()
+            .ToList();
+
+        var missingPositions = requiredPositions
+            .Where(x => !existingPositions.Contains(x))
+            .ToList();
 
         if (missingPositions.Count > 0)
             return Fail($"Модель помещения неполная. Не заданы позиции: {string.Join(", ", missingPositions)}.");
 
         var volume = room.Length * room.Width * room.Height;
+
         double equivalentAbsorptionArea = 0;
 
         foreach (var surface in surfaces)
         {
-            var area = GetSurfaceArea(room, surface.Position.Trim().ToLowerInvariant());
+            var normalizedPosition = surface.Position.Trim().ToLowerInvariant();
+            var area = GetSurfaceArea(room, normalizedPosition);
+
+            if (area <= 0)
+                continue;
+
+            // Пока в RT60 участвует только материал.
             var alpha = Clamp01(surface.Material?.NoiseCancelation ?? 0.0);
+
             equivalentAbsorptionArea += area * alpha;
         }
 
         if (equivalentAbsorptionArea <= 0)
             return Fail("Суммарное эквивалентное звукопоглощение оказалось нулевым.");
 
+        // Формула Сабина
         var rt60 = 0.161 * volume / equivalentAbsorptionArea;
+
+        // Локальный расчёт по координатам
         var distance = CoordinateHelper.Distance(sourcePoint, receiverPoint);
+        var effectiveDistance = Math.Max(distance, 0.5);
+
+        // Ослабление прямого сигнала с расстоянием
+        var attenuationDb = 20.0 * Math.Log10(effectiveDistance);
+
+        // Условный уровень сигнала в точке приёмника
+        var sourceLevel = testModel.Source.Volume;
+        var estimatedDirectLevelDb = sourceLevel - attenuationDb;
 
         return new AnalysisResult
         {
@@ -85,32 +124,45 @@ public class AnalysisService
             EquivalentAbsorptionArea = equivalentAbsorptionArea,
             Rt60 = rt60,
             SourceReceiverDistance = distance,
-            Recommendation = BuildRecommendation(rt60, distance)
+            DistanceAttenuationDb = attenuationDb,
+            EstimatedDirectLevelDb = estimatedDirectLevelDb,
+            Recommendation = BuildRecommendation(rt60, distance, estimatedDirectLevelDb)
         };
     }
 
-    private static double GetSurfaceArea(RoomModel room, string position) => position switch
+    private static double GetSurfaceArea(RoomModel room, string position)
     {
-        "floor" => room.Length * room.Width,
-        "ceiling" => room.Length * room.Width,
-        "north" => room.Length * room.Height,
-        "south" => room.Length * room.Height,
-        "east" => room.Width * room.Height,
-        "west" => room.Width * room.Height,
-        _ => 0
-    };
+        return position switch
+        {
+            "floor" => room.Length * room.Width,
+            "ceiling" => room.Length * room.Width,
+            "north" => room.Length * room.Height,
+            "south" => room.Length * room.Height,
+            "east" => room.Width * room.Height,
+            "west" => room.Width * room.Height,
+            _ => 0
+        };
+    }
 
-    private static double Clamp01(double value) => value < 0 ? 0 : value > 1 ? 1 : value;
-
-    private static AnalysisResult Fail(string message) => new()
+    private static double Clamp01(double value)
     {
-        IsSuccess = false,
-        Message = message
-    };
+        if (value < 0) return 0;
+        if (value > 1) return 1;
+        return value;
+    }
 
-    private static string BuildRecommendation(double rt60, double distance)
+    private static AnalysisResult Fail(string message)
     {
-        var rtText = rt60 switch
+        return new AnalysisResult
+        {
+            IsSuccess = false,
+            Message = message
+        };
+    }
+
+    private static string BuildRecommendation(double rt60, double distance, double directLevelDb)
+    {
+        string rtText = rt60 switch
         {
             < 0.5 => "Время реверберации низкое. Помещение может быть избыточно заглушено для естественного звучания речи.",
             <= 1.0 => "Время реверберации находится в рекомендуемом диапазоне для речевой связи.",
@@ -118,10 +170,21 @@ public class AnalysisService
             _ => "Время реверберации слишком велико. Требуется существенно повысить звукопоглощение и уменьшить поздние отражения."
         };
 
-        var distanceText = distance > 5
-            ? " Расстояние между источником и приёмником достаточно велико, поэтому при дальнейшем развитии модели стоит учитывать ослабление прямого сигнала."
-            : string.Empty;
+        string distanceText = distance switch
+        {
+            < 1.0 => " Источник и приёмник расположены очень близко.",
+            <= 3.0 => " Расстояние между источником и приёмником умеренное.",
+            <= 5.0 => " Расстояние между источником и приёмником заметное.",
+            _ => " Расстояние между источником и приёмником велико."
+        };
 
-        return rtText + distanceText;
+        string levelText = directLevelDb switch
+        {
+            < 45 => " Условный уровень прямого сигнала в точке приёмника низкий.",
+            < 55 => " Условный уровень прямого сигнала в точке приёмника средний.",
+            _ => " Условный уровень прямого сигнала в точке приёмника достаточный."
+        };
+
+        return rtText + distanceText + levelText;
     }
 }

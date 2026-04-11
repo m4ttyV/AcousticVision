@@ -39,6 +39,12 @@ public partial class AnalysisViewModel : ViewModelBase
     private string _resultDistance = string.Empty;
 
     [ObservableProperty]
+    private string _resultAttenuation = string.Empty;
+
+    [ObservableProperty]
+    private string _resultDirectLevel = string.Empty;
+
+    [ObservableProperty]
     private string _resultVolume = string.Empty;
 
     [ObservableProperty]
@@ -108,6 +114,8 @@ public partial class AnalysisViewModel : ViewModelBase
             ResultSourceLocation = result.SourceLocation;
             ResultReceiverLocation = result.ReceiverLocation;
             ResultDistance = $"{result.SourceReceiverDistance:F2} м";
+            ResultAttenuation = $"{result.DistanceAttenuationDb:F2} дБ";
+            ResultDirectLevel = $"{result.EstimatedDirectLevelDb:F2} дБ";
             ResultVolume = $"{result.Volume:F2} м³";
             ResultAbsorption = $"{result.EquivalentAbsorptionArea:F2} м²";
             ResultRt60 = $"{result.Rt60:F3} с";
@@ -129,6 +137,8 @@ public partial class AnalysisViewModel : ViewModelBase
         ResultSourceLocation = string.Empty;
         ResultReceiverLocation = string.Empty;
         ResultDistance = string.Empty;
+        ResultAttenuation = string.Empty;
+        ResultDirectLevel = string.Empty;
         ResultVolume = string.Empty;
         ResultAbsorption = string.Empty;
         ResultRt60 = string.Empty;
