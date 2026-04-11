@@ -7,7 +7,7 @@
     <ScrollViewer>
         <StackPanel Spacing="16">
             <TextBlock Text="{Binding AppName}" FontSize="28" FontWeight="Bold"/>
-            <TextBlock Text="{Binding Subtitle}" FontSize="16" Foreground="#4B5563"/>
+            <TextBlock Text="{Binding Subtitle}" FontSize="16" Foreground="{DynamicResource AppSecondaryTextBrush}"/>
             <TextBlock Text="{Binding Summary}" TextWrapping="Wrap"/>
 
             <Border Classes="card">

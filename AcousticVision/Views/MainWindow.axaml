@@ -8,7 +8,7 @@
     Title="AcousticVision"
     Width="1280"
     Height="820"
-    Background="#F5F7FA">
+    Background="{DynamicResource AppWindowBackgroundBrush}">
 
     <Window.DataTemplates>
         <DataTemplate DataType="vm:OverviewViewModel"><views:OverviewView/></DataTemplate>
@@ -23,21 +23,21 @@
     </Window.DataTemplates>
 
     <Grid ColumnDefinitions="280,*" RowDefinitions="72,*">
-        <Border Grid.ColumnSpan="2" Background="#1F2937" Padding="20,14">
+        <Border Grid.ColumnSpan="2" Background="{DynamicResource AppHeaderBackgroundBrush}" Padding="20,14">
             <Grid ColumnDefinitions="*,Auto">
                 <StackPanel>
-                    <TextBlock Text="AcousticVision" Foreground="White" FontSize="24" FontWeight="Bold"/>
-                    <TextBlock Text="Анализ акустических характеристик речи" Foreground="#D1D5DB" FontSize="13"/>
+                    <TextBlock Text="AcousticVision" Foreground="{DynamicResource AppHeaderPrimaryTextBrush}" FontSize="24" FontWeight="Bold"/>
+                    <TextBlock Text="Анализ акустических характеристик речи" Foreground="{DynamicResource AppHeaderSecondaryTextBrush}" FontSize="13"/>
                 </StackPanel>
-                <TextBlock Grid.Column="1" VerticalAlignment="Center" Foreground="#D1D5DB" FontSize="13"
+                <TextBlock Grid.Column="1" VerticalAlignment="Center" Foreground="{DynamicResource AppHeaderSecondaryTextBrush}" FontSize="13"
                            Text="C# / Avalonia / SQLite / EF Core"/>
             </Grid>
         </Border>
 
-        <Border Grid.Row="1" Background="#111827" Padding="16">
+        <Border Grid.Row="1" Background="{DynamicResource AppSidebarBackgroundBrush}" Padding="16">
             <ScrollViewer>
                 <StackPanel Spacing="4">
-                    <TextBlock Text="Навигация" Foreground="#E5E7EB" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                    <TextBlock Text="Навигация" Foreground="{DynamicResource AppSidebarTextBrush}" FontWeight="SemiBold" Margin="0,0,0,8"/>
                     <Button Classes="nav" Content="Обзор" Command="{Binding ShowOverviewCommand}"/>
                     <Button Classes="nav" Content="Помещения" Command="{Binding ShowRoomsCommand}"/>
                     <Button Classes="nav" Content="Поверхности помещения" Command="{Binding ShowRoomSurfacesCommand}"/>
@@ -51,7 +51,7 @@
             </ScrollViewer>
         </Border>
 
-        <Border Grid.Column="1" Grid.Row="1" Padding="20" Background="#F5F7FA">
+        <Border Grid.Column="1" Grid.Row="1" Padding="20" Background="{DynamicResource AppWindowBackgroundBrush}">
             <ContentControl Content="{Binding CurrentViewModel}"/>
         </Border>
     </Grid>

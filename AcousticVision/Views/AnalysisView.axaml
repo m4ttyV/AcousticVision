@@ -58,6 +58,6 @@
             </StackPanel>
         </Border>
 
-        <TextBlock Grid.Row="3" Text="{Binding StatusMessage}" Foreground="DarkBlue" TextWrapping="Wrap"/>
+        <TextBlock Grid.Row="3" Text="{Binding StatusMessage}" Foreground="{DynamicResource AppStatusTextBrush}" TextWrapping="Wrap"/>
     </Grid>
 </UserControl>

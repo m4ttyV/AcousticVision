@@ -54,7 +54,7 @@
 
         <TextBlock Grid.Row="3"
                    Text="{Binding StatusMessage}"
-                   Foreground="DarkBlue"
+                   Foreground="{DynamicResource AppStatusTextBrush}"
                    TextWrapping="Wrap"/>
     </Grid>
 </UserControl>
