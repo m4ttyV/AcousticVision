@@ -1,35 +1,35 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:AcousticVision.ViewModels"
-             x:Class="AcousticVision.Views.MaterialsView"
-             x:DataType="vm:MaterialsViewModel">
+             x:Class="AcousticVision.Views.TexturesView"
+             x:DataType="vm:TexturesViewModel">
 
     <Grid RowDefinitions="Auto,Auto,*,Auto" ColumnDefinitions="*"
           RowSpacing="12">
 
         <TextBlock Grid.Row="0"
-                   Text="Раздел: Материалы"
+                   Text="Раздел: Фактуры"
                    FontSize="20"
                    FontWeight="Bold"/>
 
         <Border Grid.Row="1" Classes="card">
             <StackPanel Spacing="8">
-                <TextBlock Text="Добавление материала" FontWeight="Bold"/>
+                <TextBlock Text="Добавление фактуры" FontWeight="Bold"/>
 
-                <TextBox Watermark="Название материала"
-                         Text="{Binding NewMaterialName}"/>
+                <TextBox Watermark="Название фактуры"
+                         Text="{Binding NewTextureName}"/>
 
                 <TextBox Watermark="Коэффициент звукопоглощения (0..1)"
                          Text="{Binding NewNoiseCancelation}"/>
 
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <Button Classes="action" Content="Добавить"
-                            Command="{Binding AddMaterialCommand}"/>
+                            Command="{Binding AddTextureCommand}"/>
 
                     <Button Classes="action" Content="Обновить список"
                             Command="{Binding LoadCommand}"/>
 
-                    <Button Classes="action" Content="Удалить выбранный"
+                    <Button Classes="action" Content="Удалить выбранную"
                             Command="{Binding DeleteSelectedCommand}"/>
                 </StackPanel>
             </StackPanel>
@@ -37,10 +37,10 @@
 
         <Border Grid.Row="2" Classes="card">
             <StackPanel Spacing="8">
-                <TextBlock Text="Список материалов" FontWeight="Bold"/>
+                <TextBlock Text="Список фактур" FontWeight="Bold"/>
 
-                <DataGrid ItemsSource="{Binding Materials}"
-                          SelectedItem="{Binding SelectedMaterial}"
+                <DataGrid ItemsSource="{Binding Textures}"
+                          SelectedItem="{Binding SelectedTexture}"
                           AutoGenerateColumns="False"
                           Height="350">
                     <DataGrid.Columns>

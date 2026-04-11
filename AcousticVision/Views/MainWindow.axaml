@@ -6,57 +6,53 @@
     x:Class="AcousticVision.Views.MainWindow"
     x:DataType="vm:MainWindowViewModel"
     Title="AcousticVision"
-    Width="1200"
-    Height="750">
+    Width="1280"
+    Height="820"
+    Background="#F5F7FA">
 
     <Window.DataTemplates>
-        <DataTemplate DataType="vm:OverviewViewModel">
-            <views:OverviewView/>
-        </DataTemplate>
-        <DataTemplate DataType="vm:RoomsViewModel">
-            <views:RoomsView/>
-        </DataTemplate>
-        <DataTemplate DataType="vm:MaterialsViewModel">
-            <views:MaterialsView/>
-        </DataTemplate>
-        <DataTemplate DataType="vm:SourcesViewModel">
-            <views:SourcesView/>
-        </DataTemplate>
-        <DataTemplate DataType="vm:ReceiversViewModel">
-            <views:ReceiversView/>
-        </DataTemplate>
-        <DataTemplate DataType="vm:TestModelsViewModel">
-            <views:TestModelsView/>
-        </DataTemplate>
-        <DataTemplate DataType="vm:AnalysisViewModel">
-            <views:AnalysisView/>
-        </DataTemplate>
+        <DataTemplate DataType="vm:OverviewViewModel"><views:OverviewView/></DataTemplate>
+        <DataTemplate DataType="vm:RoomsViewModel"><views:RoomsView/></DataTemplate>
+        <DataTemplate DataType="vm:RoomSurfacesViewModel"><views:RoomSurfacesView/></DataTemplate>
+        <DataTemplate DataType="vm:MaterialsViewModel"><views:MaterialsView/></DataTemplate>
+        <DataTemplate DataType="vm:TexturesViewModel"><views:TexturesView/></DataTemplate>
+        <DataTemplate DataType="vm:SourcesViewModel"><views:SourcesView/></DataTemplate>
+        <DataTemplate DataType="vm:ReceiversViewModel"><views:ReceiversView/></DataTemplate>
+        <DataTemplate DataType="vm:TestModelsViewModel"><views:TestModelsView/></DataTemplate>
+        <DataTemplate DataType="vm:AnalysisViewModel"><views:AnalysisView/></DataTemplate>
     </Window.DataTemplates>
 
-    <Grid ColumnDefinitions="250,*" RowDefinitions="Auto,*">
-
-        <Border Grid.ColumnSpan="2" Background="#1F2937" Padding="15">
-            <TextBlock Text="AcousticVision"
-                       Foreground="White"
-                       FontSize="22"
-                       FontWeight="Bold"/>
+    <Grid ColumnDefinitions="280,*" RowDefinitions="72,*">
+        <Border Grid.ColumnSpan="2" Background="#1F2937" Padding="20,14">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel>
+                    <TextBlock Text="AcousticVision" Foreground="White" FontSize="24" FontWeight="Bold"/>
+                    <TextBlock Text="Анализ акустических характеристик речи" Foreground="#D1D5DB" FontSize="13"/>
+                </StackPanel>
+                <TextBlock Grid.Column="1" VerticalAlignment="Center" Foreground="#D1D5DB" FontSize="13"
+                           Text="C# / Avalonia / SQLite / EF Core"/>
+            </Grid>
         </Border>
 
-        <Border Grid.Row="1" Background="#111827" Padding="10">
-            <StackPanel Spacing="8">
-                <Button Content="Обзор" Command="{Binding ShowOverviewCommand}"/>
-                <Button Content="Помещения" Command="{Binding ShowRoomsCommand}"/>
-                <Button Content="Материалы" Command="{Binding ShowMaterialsCommand}"/>
-                <Button Content="Источники" Command="{Binding ShowSourcesCommand}"/>
-                <Button Content="Приёмники" Command="{Binding ShowReceiversCommand}"/>
-                <Button Content="Тест-модели" Command="{Binding ShowTestModelsCommand}"/>
-                <Button Content="Анализ" Command="{Binding ShowAnalysisCommand}"/>
-            </StackPanel>
+        <Border Grid.Row="1" Background="#111827" Padding="16">
+            <ScrollViewer>
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Навигация" Foreground="#E5E7EB" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                    <Button Classes="nav" Content="Обзор" Command="{Binding ShowOverviewCommand}"/>
+                    <Button Classes="nav" Content="Помещения" Command="{Binding ShowRoomsCommand}"/>
+                    <Button Classes="nav" Content="Поверхности помещения" Command="{Binding ShowRoomSurfacesCommand}"/>
+                    <Button Classes="nav" Content="Материалы" Command="{Binding ShowMaterialsCommand}"/>
+                    <Button Classes="nav" Content="Фактуры" Command="{Binding ShowTexturesCommand}"/>
+                    <Button Classes="nav" Content="Источники" Command="{Binding ShowSourcesCommand}"/>
+                    <Button Classes="nav" Content="Приёмники" Command="{Binding ShowReceiversCommand}"/>
+                    <Button Classes="nav" Content="Тест-модели" Command="{Binding ShowTestModelsCommand}"/>
+                    <Button Classes="nav" Content="Анализ" Command="{Binding ShowAnalysisCommand}"/>
+                </StackPanel>
+            </ScrollViewer>
         </Border>
 
-        <Border Grid.Column="1" Grid.Row="1" Padding="20">
+        <Border Grid.Column="1" Grid.Row="1" Padding="20" Background="#F5F7FA">
             <ContentControl Content="{Binding CurrentViewModel}"/>
         </Border>
-
     </Grid>
 </Window>

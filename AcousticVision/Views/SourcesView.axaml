@@ -1,7 +1,44 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="AcousticVision.Views.SourcesView">
+             xmlns:vm="using:AcousticVision.ViewModels"
+             x:Class="AcousticVision.Views.SourcesView"
+             x:DataType="vm:SourcesViewModel">
 
-    <TextBlock Text="Раздел: Источники звука" FontSize="18"/>
+    <Grid RowDefinitions="Auto,Auto,*,Auto" ColumnDefinitions="*" RowSpacing="12">
+        <TextBlock Grid.Row="0" Text="Раздел: Источники звука" FontSize="20" FontWeight="Bold"/>
 
+        <Border Grid.Row="1" Classes="card">
+            <StackPanel Spacing="8">
+                <TextBlock Text="Добавление источника" FontWeight="Bold"/>
+                <TextBox Watermark="Название источника" Text="{Binding NewSourceName}"/>
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                    <TextBox Grid.Column="0" Watermark="Громкость" Text="{Binding NewVolume}"/>
+                    <TextBox Grid.Column="1" Watermark="Article (0..1, необязательно)" Text="{Binding NewArticle}"/>
+                </Grid>
+                <TextBox Watermark="Дополнительные свойства" Text="{Binding NewProperties}"/>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button Classes="action" Content="Добавить" Command="{Binding AddSourceCommand}"/>
+                    <Button Classes="action" Content="Обновить список" Command="{Binding LoadCommand}"/>
+                    <Button Classes="action" Content="Удалить выбранный" Command="{Binding DeleteSelectedCommand}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="2" Classes="card">
+            <StackPanel Spacing="8">
+                <TextBlock Text="Список источников" FontWeight="Bold"/>
+                <DataGrid ItemsSource="{Binding Sources}" SelectedItem="{Binding SelectedSource}" AutoGenerateColumns="False" Height="350">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="70"/>
+                        <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="220"/>
+                        <DataGridTextColumn Header="Volume" Binding="{Binding Volume}" Width="100"/>
+                        <DataGridTextColumn Header="Article" Binding="{Binding Article}" Width="100"/>
+                        <DataGridTextColumn Header="Properties" Binding="{Binding Properties}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </Border>
+
+        <TextBlock Grid.Row="3" Text="{Binding StatusMessage}" Foreground="DarkBlue" TextWrapping="Wrap"/>
+    </Grid>
 </UserControl>

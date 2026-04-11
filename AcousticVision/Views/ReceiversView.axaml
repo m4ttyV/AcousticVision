@@ -1,7 +1,38 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="AcousticVision.Views.ReceiversView">
+             xmlns:vm="using:AcousticVision.ViewModels"
+             x:Class="AcousticVision.Views.ReceiversView"
+             x:DataType="vm:ReceiversViewModel">
 
-    <TextBlock Text="Раздел: Приёмники звука" FontSize="18"/>
+    <Grid RowDefinitions="Auto,Auto,*,Auto" ColumnDefinitions="*" RowSpacing="12">
+        <TextBlock Grid.Row="0" Text="Раздел: Приёмники звука" FontSize="20" FontWeight="Bold"/>
 
+        <Border Grid.Row="1" Classes="card">
+            <StackPanel Spacing="8">
+                <TextBlock Text="Добавление приёмника" FontWeight="Bold"/>
+                <TextBox Watermark="Название приёмника" Text="{Binding NewReceiverName}"/>
+                <TextBox Watermark="Дополнительные свойства" Text="{Binding NewProperties}"/>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button Classes="action" Content="Добавить" Command="{Binding AddReceiverCommand}"/>
+                    <Button Classes="action" Content="Обновить список" Command="{Binding LoadCommand}"/>
+                    <Button Classes="action" Content="Удалить выбранный" Command="{Binding DeleteSelectedCommand}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="2" Classes="card">
+            <StackPanel Spacing="8">
+                <TextBlock Text="Список приёмников" FontWeight="Bold"/>
+                <DataGrid ItemsSource="{Binding Receivers}" SelectedItem="{Binding SelectedReceiver}" AutoGenerateColumns="False" Height="350">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="70"/>
+                        <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="220"/>
+                        <DataGridTextColumn Header="Properties" Binding="{Binding Properties}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </Border>
+
+        <TextBlock Grid.Row="3" Text="{Binding StatusMessage}" Foreground="DarkBlue" TextWrapping="Wrap"/>
+    </Grid>
 </UserControl>

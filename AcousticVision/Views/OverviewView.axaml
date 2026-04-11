@@ -1,10 +1,48 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="AcousticVision.Views.OverviewView">
+             xmlns:vm="using:AcousticVision.ViewModels"
+             x:Class="AcousticVision.Views.OverviewView"
+             x:DataType="vm:OverviewViewModel">
 
-    <StackPanel>
-        <TextBlock Text="Обзор системы" FontSize="20" FontWeight="Bold"/>
-        <TextBlock Text="Добро пожаловать в AcousticVision"/>
-    </StackPanel>
+    <ScrollViewer>
+        <StackPanel Spacing="16">
+            <TextBlock Text="{Binding AppName}" FontSize="28" FontWeight="Bold"/>
+            <TextBlock Text="{Binding Subtitle}" FontSize="16" Foreground="#4B5563"/>
+            <TextBlock Text="{Binding Summary}" TextWrapping="Wrap"/>
 
+            <Border Classes="card">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Что уже реализовано" FontSize="18" FontWeight="SemiBold"/>
+                    <TextBlock Text="• справочники материалов и фактур"/>
+                    <TextBlock Text="• помещения и поверхности помещения"/>
+                    <TextBlock Text="• источники и приёмники звука"/>
+                    <TextBlock Text="• тестовые модели с координатами источника и приёмника"/>
+                    <TextBlock Text="• проверка координат на попадание внутрь помещения"/>
+                    <TextBlock Text="• расчёт RT60 по материалам поверхностей"/>
+                </StackPanel>
+            </Border>
+
+            <Border Classes="card">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Как сейчас используются координаты" FontSize="18" FontWeight="SemiBold"/>
+                    <TextBlock TextWrapping="Wrap"
+                               Text="Координаты источника и приёмника задаются не в их справочниках, а в тестовой модели. Это позволяет использовать один и тот же источник или приёмник в разных сценариях с разным расположением."/>
+                    <TextBlock TextWrapping="Wrap"
+                               Text="Перед сохранением и перед анализом система проверяет, что обе точки лежат внутри выбранного помещения. В текущей версии координаты не влияют на сам RT60, но уже используются для проверки корректности конфигурации и вычисления расстояния источник–приёмник."/>
+                </StackPanel>
+            </Border>
+
+            <Border Classes="card">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Рекомендуемая последовательность работы" FontSize="18" FontWeight="SemiBold"/>
+                    <TextBlock Text="1. Заполнить материалы и фактуры."/>
+                    <TextBlock Text="2. Создать помещение и задать его размеры."/>
+                    <TextBlock Text="3. Назначить поверхности помещения по позициям floor / ceiling / north / south / east / west."/>
+                    <TextBlock Text="4. Создать источник и приёмник."/>
+                    <TextBlock Text="5. Сформировать тестовую модель и задать координаты."/>
+                    <TextBlock Text="6. Перейти в анализ и рассчитать RT60."/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

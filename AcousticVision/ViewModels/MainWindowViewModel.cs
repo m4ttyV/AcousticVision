@@ -1,5 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AcousticVision.ViewModels;
 
@@ -10,7 +11,6 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public MainWindowViewModel()
     {
-        // стартовый экран
         CurrentViewModel = new OverviewViewModel();
     }
 
@@ -18,20 +18,66 @@ public partial class MainWindowViewModel : ViewModelBase
     private void ShowOverview() => CurrentViewModel = new OverviewViewModel();
 
     [RelayCommand]
-    private void ShowRooms() => CurrentViewModel = new RoomsViewModel();
+    private async void ShowRooms()
+    {
+        var vm = App.Services!.GetRequiredService<RoomsViewModel>();
+        await vm.InitializeAsync();
+        CurrentViewModel = vm;
+    }
 
     [RelayCommand]
-    private void ShowMaterials() => CurrentViewModel = new MaterialsViewModel();
+    private async void ShowRoomSurfaces()
+    {
+        var vm = App.Services!.GetRequiredService<RoomSurfacesViewModel>();
+        await vm.InitializeAsync();
+        CurrentViewModel = vm;
+    }
 
     [RelayCommand]
-    private void ShowSources() => CurrentViewModel = new SourcesViewModel();
+    private async void ShowMaterials()
+    {
+        var vm = App.Services!.GetRequiredService<MaterialsViewModel>();
+        await vm.InitializeAsync();
+        CurrentViewModel = vm;
+    }
 
     [RelayCommand]
-    private void ShowReceivers() => CurrentViewModel = new ReceiversViewModel();
+    private async void ShowTextures()
+    {
+        var vm = App.Services!.GetRequiredService<TexturesViewModel>();
+        await vm.InitializeAsync();
+        CurrentViewModel = vm;
+    }
 
     [RelayCommand]
-    private void ShowTestModels() => CurrentViewModel = new TestModelsViewModel();
+    private async void ShowSources()
+    {
+        var vm = App.Services!.GetRequiredService<SourcesViewModel>();
+        await vm.InitializeAsync();
+        CurrentViewModel = vm;
+    }
 
     [RelayCommand]
-    private void ShowAnalysis() => CurrentViewModel = new AnalysisViewModel();
+    private async void ShowReceivers()
+    {
+        var vm = App.Services!.GetRequiredService<ReceiversViewModel>();
+        await vm.InitializeAsync();
+        CurrentViewModel = vm;
+    }
+
+    [RelayCommand]
+    private async void ShowTestModels()
+    {
+        var vm = App.Services!.GetRequiredService<TestModelsViewModel>();
+        await vm.InitializeAsync();
+        CurrentViewModel = vm;
+    }
+
+    [RelayCommand]
+    private async void ShowAnalysis()
+    {
+        var vm = App.Services!.GetRequiredService<AnalysisViewModel>();
+        await vm.InitializeAsync();
+        CurrentViewModel = vm;
+    }
 }

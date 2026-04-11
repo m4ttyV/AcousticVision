@@ -1,5 +1,6 @@
 ﻿using AcousticVision.Models;
 using AcousticVision.Services;
+using Avalonia.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
@@ -8,18 +9,18 @@ using System.Threading.Tasks;
 
 namespace AcousticVision.ViewModels;
 
-public partial class MaterialsViewModel : ViewModelBase
+public partial class TexturesViewModel : ViewModelBase
 {
-    private readonly MaterialService _materialService;
+    private readonly TextureService _textureService;
 
     [ObservableProperty]
-    private ObservableCollection<Material> _materials = new();
+    private ObservableCollection<Texture> _textures = new();
 
     [ObservableProperty]
-    private Material? _selectedMaterial;
+    private Texture? _selectedTexture;
 
     [ObservableProperty]
-    private string _newMaterialName = string.Empty;
+    private string _newTextureName = string.Empty;
 
     [ObservableProperty]
     private string _newNoiseCancelation = string.Empty;
@@ -27,31 +28,40 @@ public partial class MaterialsViewModel : ViewModelBase
     [ObservableProperty]
     private string _statusMessage = string.Empty;
 
-    public MaterialsViewModel(MaterialService materialService)
+    public TexturesViewModel(TextureService textureService)
     {
-        _materialService = materialService;
+        _textureService = textureService;
+    }
+
+    public async Task InitializeAsync()
+    {
+        await LoadAsync();
     }
 
     [RelayCommand]
     private async Task LoadAsync()
     {
-        var items = await _materialService.GetAllAsync();
-        Materials = new ObservableCollection<Material>(items);
-        StatusMessage = $"Загружено материалов: {Materials.Count}";
+        try
+        {
+            var items = await _textureService.GetAllAsync();
+            Textures = new ObservableCollection<Texture>(items);
+            StatusMessage = $"Загружено фактур: {Textures.Count}";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Ошибка загрузки: {ex.Message}";
+        }
     }
-    public async Task InitializeAsync()
-    {
-        await LoadAsync();
-    }
+
     [RelayCommand]
-    private async Task AddMaterialAsync()
+    private async Task AddTextureAsync()
     {
         StatusMessage = string.Empty;
 
-        var name = NewMaterialName?.Trim() ?? string.Empty;
+        var name = NewTextureName?.Trim() ?? string.Empty;
         if (string.IsNullOrWhiteSpace(name))
         {
-            StatusMessage = "Введите название материала.";
+            StatusMessage = "Введите название фактуры.";
             return;
         }
 
@@ -71,11 +81,11 @@ public partial class MaterialsViewModel : ViewModelBase
 
         try
         {
-            await _materialService.AddAsync(name, value);
-            NewMaterialName = string.Empty;
+            await _textureService.AddAsync(name, value);
+            NewTextureName = string.Empty;
             NewNoiseCancelation = string.Empty;
             await LoadAsync();
-            StatusMessage = "Материал успешно добавлен.";
+            StatusMessage = "Фактура успешно добавлена.";
         }
         catch (Exception ex)
         {
@@ -86,17 +96,17 @@ public partial class MaterialsViewModel : ViewModelBase
     [RelayCommand]
     private async Task DeleteSelectedAsync()
     {
-        if (SelectedMaterial is null)
+        if (SelectedTexture is null)
         {
-            StatusMessage = "Выберите материал для удаления.";
+            StatusMessage = "Выберите фактуру для удаления.";
             return;
         }
 
         try
         {
-            await _materialService.DeleteAsync(SelectedMaterial.Id);
+            await _textureService.DeleteAsync(SelectedTexture.Id);
             await LoadAsync();
-            StatusMessage = "Материал удалён.";
+            StatusMessage = "Фактура удалена.";
         }
         catch (Exception ex)
         {

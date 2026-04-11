@@ -1,7 +1,63 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="AcousticVision.Views.AnalysisView">
+             xmlns:vm="using:AcousticVision.ViewModels"
+             xmlns:models="using:AcousticVision.Models"
+             x:Class="AcousticVision.Views.AnalysisView"
+             x:DataType="vm:AnalysisViewModel">
 
-    <TextBlock Text="Раздел: Анализ" FontSize="18"/>
+    <Grid RowDefinitions="Auto,Auto,*,Auto" ColumnDefinitions="*" RowSpacing="12">
+        <TextBlock Grid.Row="0" Text="Раздел: Анализ" FontSize="20" FontWeight="Bold"/>
 
+        <Border Grid.Row="1" Classes="card">
+            <StackPanel Spacing="8">
+                <TextBlock Text="Запуск анализа" FontWeight="Bold"/>
+                <TextBlock Text="Тестовая модель"/>
+                <ComboBox ItemsSource="{Binding TestModels}" SelectedItem="{Binding SelectedTestModel}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="models:TestModel">
+                            <TextBlock Text="{Binding DisplayName}" TextWrapping="Wrap"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button Classes="action" Content="Рассчитать" Command="{Binding RunAnalysisCommand}"/>
+                    <Button Classes="action" Content="Обновить список" Command="{Binding LoadCommand}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="2" Classes="card">
+            <StackPanel Spacing="8">
+                <TextBlock Text="Результат анализа" FontWeight="Bold"/>
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                      ColumnDefinitions="220,*"
+                      RowSpacing="6"
+                      ColumnSpacing="12">
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Помещение:" FontWeight="Bold"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ResultRoom}"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Источник:" FontWeight="Bold"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ResultSource}"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Координаты источника:" FontWeight="Bold"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding ResultSourceLocation}"/>
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Приёмник:" FontWeight="Bold"/>
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding ResultReceiver}"/>
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Координаты приёмника:" FontWeight="Bold"/>
+                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding ResultReceiverLocation}"/>
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Расстояние источник–приёмник:" FontWeight="Bold"/>
+                    <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding ResultDistance}"/>
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Объём помещения:" FontWeight="Bold"/>
+                    <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding ResultVolume}"/>
+                    <TextBlock Grid.Row="7" Grid.Column="0" Text="Эквивалентное поглощение:" FontWeight="Bold"/>
+                    <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding ResultAbsorption}"/>
+                    <TextBlock Grid.Row="8" Grid.Column="0" Text="RT60 / рекомендация:" FontWeight="Bold"/>
+                    <StackPanel Grid.Row="8" Grid.Column="1" Spacing="4">
+                        <TextBlock Text="{Binding ResultRt60}" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding ResultRecommendation}" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <TextBlock Grid.Row="3" Text="{Binding StatusMessage}" Foreground="DarkBlue" TextWrapping="Wrap"/>
+    </Grid>
 </UserControl>

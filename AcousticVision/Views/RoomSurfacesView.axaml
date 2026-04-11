@@ -1,0 +1,64 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:AcousticVision.ViewModels"
+             xmlns:models="using:AcousticVision.Models"
+             x:Class="AcousticVision.Views.RoomSurfacesView"
+             x:DataType="vm:RoomSurfacesViewModel">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto" ColumnDefinitions="*" RowSpacing="12">
+        <TextBlock Grid.Row="0" Text="Раздел: Поверхности помещения" FontSize="20" FontWeight="Bold"/>
+
+        <Border Grid.Row="1" Classes="card">
+            <StackPanel Spacing="8">
+                <TextBlock Text="Настройка поверхностей" FontWeight="Bold"/>
+
+                <TextBlock Text="Помещение"/>
+                <ComboBox ItemsSource="{Binding Rooms}" SelectedItem="{Binding SelectedRoom}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="models:RoomModel"><TextBlock Text="{Binding Name}"/></DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <TextBlock Text="Позиция"/>
+                <ComboBox ItemsSource="{Binding Positions}" SelectedItem="{Binding SelectedPosition}"/>
+
+                <TextBlock Text="Материал"/>
+                <ComboBox ItemsSource="{Binding Materials}" SelectedItem="{Binding SelectedMaterial}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="models:Material"><TextBlock Text="{Binding Name}"/></DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <TextBlock Text="Фактура"/>
+                <ComboBox ItemsSource="{Binding Textures}" SelectedItem="{Binding SelectedTexture}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="models:Texture"><TextBlock Text="{Binding Name}"/></DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button Classes="action" Content="Сохранить" Command="{Binding SaveSurfaceCommand}"/>
+                    <Button Classes="action" Content="Обновить список" Command="{Binding LoadSurfacesCommand}"/>
+                    <Button Classes="action" Content="Удалить выбранную" Command="{Binding DeleteSelectedCommand}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="2" Classes="card">
+            <StackPanel Spacing="8">
+                <TextBlock Text="Список поверхностей" FontWeight="Bold"/>
+
+                <DataGrid ItemsSource="{Binding Surfaces}" SelectedItem="{Binding SelectedSurface}" AutoGenerateColumns="False" Height="350">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Помещение" Binding="{Binding Room.Name}" Width="180"/>
+                        <DataGridTextColumn Header="Позиция" Binding="{Binding Position}" Width="120"/>
+                        <DataGridTextColumn Header="Материал" Binding="{Binding Material.Name}" Width="180"/>
+                        <DataGridTextColumn Header="Фактура" Binding="{Binding Texture.Name}" Width="180"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </Border>
+
+        <TextBlock Grid.Row="3" Text="{Binding StatusMessage}" Foreground="DarkBlue" TextWrapping="Wrap"/>
+    </Grid>
+</UserControl>

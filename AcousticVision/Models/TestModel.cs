@@ -12,4 +12,9 @@ public class TestModel
 
     public int ReceiverId { get; set; }
     public SoundReceiver? Receiver { get; set; }
+
+    public string SourceLocation { get; set; } = string.Empty;
+    public string ReceiverLocation { get; set; } = string.Empty;
+
+    public string DisplayName => $"{Room?.Name ?? "—"} / {Source?.Name ?? "—"} {SourceLocation} / {Receiver?.Name ?? "—"} {ReceiverLocation}";
 }
