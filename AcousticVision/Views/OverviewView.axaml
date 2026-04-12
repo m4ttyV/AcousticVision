@@ -4,45 +4,85 @@
              x:Class="AcousticVision.Views.OverviewView"
              x:DataType="vm:OverviewViewModel">
 
-    <ScrollViewer>
-        <StackPanel Spacing="16">
-            <TextBlock Text="{Binding AppName}" FontSize="28" FontWeight="Bold"/>
-            <TextBlock Text="{Binding Subtitle}" FontSize="16" Foreground="{DynamicResource AppSecondaryTextBrush}"/>
-            <TextBlock Text="{Binding Summary}" TextWrapping="Wrap"/>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Spacing="12">
 
             <Border Classes="card">
                 <StackPanel Spacing="8">
-                    <TextBlock Text="Что уже реализовано" FontSize="18" FontWeight="SemiBold"/>
-                    <TextBlock Text="• справочники материалов и фактур"/>
-                    <TextBlock Text="• помещения и поверхности помещения"/>
-                    <TextBlock Text="• источники и приёмники звука"/>
-                    <TextBlock Text="• тестовые модели с координатами источника и приёмника"/>
-                    <TextBlock Text="• проверка координат на попадание внутрь помещения"/>
-                    <TextBlock Text="• расчёт RT60 по материалам поверхностей"/>
-                </StackPanel>
-            </Border>
+                    <TextBlock Text="Обзор системы"
+                               FontSize="22"
+                               FontWeight="Bold"/>
 
-            <Border Classes="card">
-                <StackPanel Spacing="8">
-                    <TextBlock Text="Как сейчас используются координаты" FontSize="18" FontWeight="SemiBold"/>
                     <TextBlock TextWrapping="Wrap"
-                               Text="Координаты источника и приёмника задаются не в их справочниках, а в тестовой модели. Это позволяет использовать один и тот же источник или приёмник в разных сценариях с разным расположением."/>
-                    <TextBlock TextWrapping="Wrap"
-                               Text="Перед сохранением и перед анализом система проверяет, что обе точки лежат внутри выбранного помещения. В текущей версии координаты не влияют на сам RT60, но уже используются для проверки корректности конфигурации и вычисления расстояния источник–приёмник."/>
+                               Text="AcousticVision — прототип программной системы для анализа акустических характеристик речи в помещении. Система использует геометрию помещения, свойства его поверхностей, параметры источника и положение приёмника для получения оценочных характеристик акустической обстановки."/>
                 </StackPanel>
             </Border>
 
             <Border Classes="card">
                 <StackPanel Spacing="8">
-                    <TextBlock Text="Рекомендуемая последовательность работы" FontSize="18" FontWeight="SemiBold"/>
-                    <TextBlock Text="1. Заполнить материалы и фактуры."/>
-                    <TextBlock Text="2. Создать помещение и задать его размеры."/>
-                    <TextBlock Text="3. Назначить поверхности помещения по позициям floor / ceiling / north / south / east / west."/>
-                    <TextBlock Text="4. Создать источник и приёмник."/>
-                    <TextBlock Text="5. Сформировать тестовую модель и задать координаты."/>
-                    <TextBlock Text="6. Перейти в анализ и рассчитать RT60."/>
+                    <TextBlock Text="Как выполняется оценка"
+                               FontSize="18"
+                               FontWeight="Bold"/>
+
+                    <TextBlock TextWrapping="Wrap"
+                               Text="На текущем этапе прототип оценивает акустические условия по двум основным направлениям: по общим параметрам помещения и по взаимному расположению источника и приёмника."/>
                 </StackPanel>
             </Border>
+
+            <Border Classes="card">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="1. Оценка времени реверберации RT60"
+                               FontSize="18"
+                               FontWeight="Bold"/>
+
+                    <TextBlock TextWrapping="Wrap"
+                               Text="Для помещения рассчитывается время реверберации RT60 — интервал, за который уровень звука после выключения источника уменьшается на 60 дБ. На практике RT60 позволяет оценить, насколько помещение является «гулким» или, наоборот, акустически комфортным для восприятия речи."/>
+
+                    <TextBlock TextWrapping="Wrap"
+                               Text="Расчёт выполняется по статистической модели на основе объёма помещения и суммарного эквивалентного звукопоглощения его поверхностей. Чем больше звукопоглощение материалов, тем меньше RT60 и тем, как правило, выше разборчивость речи."/>
+                </StackPanel>
+            </Border>
+
+            <Border Classes="card">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="2. Учёт расстояния между источником и приёмником"
+                               FontSize="18"
+                               FontWeight="Bold"/>
+
+                    <TextBlock TextWrapping="Wrap"
+                               Text="Координаты источника и приёмника используются для определения расстояния между ними. На основе этого расстояния рассчитывается оценка ослабления прямого сигнала: при увеличении дистанции уровень прямого звука в точке приёмника уменьшается."/>
+
+                    <TextBlock TextWrapping="Wrap"
+                               Text="Таким образом, даже при одинаковом RT60 условия восприятия речи могут отличаться: если источник расположен слишком далеко от приёмника, полезный сигнал в точке прослушивания становится слабее, что может ухудшать субъективное качество восприятия."/>
+                </StackPanel>
+            </Border>
+
+            <Border Classes="card">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Итоговая интерпретация результата"
+                               FontSize="18"
+                               FontWeight="Bold"/>
+
+                    <TextBlock TextWrapping="Wrap"
+                               Text="Итоговая рекомендация формируется с учётом двух факторов: общего акустического состояния помещения (через RT60) и локальных условий в точке приёмника (через расстояние и условный уровень прямого сигнала). Такой подход позволяет получить не только численные значения, но и текстовую оценку качества выбранной конфигурации."/>
+                </StackPanel>
+            </Border>
+
+            <Border Classes="card">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Текущий состав модулей"
+                               FontSize="18"
+                               FontWeight="Bold"/>
+
+                    <TextBlock Text="• помещения;" />
+                    <TextBlock Text="• поверхности помещения;" />
+                    <TextBlock Text="• материалы и фактуры;" />
+                    <TextBlock Text="• источники и приёмники;" />
+                    <TextBlock Text="• тестовые модели;" />
+                    <TextBlock Text="• модуль анализа и формирования рекомендаций." />
+                </StackPanel>
+            </Border>
+
         </StackPanel>
     </ScrollViewer>
 </UserControl>
