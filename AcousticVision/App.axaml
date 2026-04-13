@@ -19,6 +19,15 @@
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
             <Setter Property="Padding" Value="14,10"/>
             <Setter Property="Margin" Value="0,0,0,6"/>
+            <Setter Property="Background" Value="{DynamicResource AppNavButtonBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource AppNavButtonForegroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource AppNavButtonBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+        </Style>
+
+        <Style Selector="Button.nav:pointerover">
+            <Setter Property="Background" Value="{DynamicResource AppNavButtonHoverBrush}"/>
         </Style>
 
         <Style Selector="Button.action">
@@ -33,6 +42,8 @@
             <Setter Property="CornerRadius" Value="10"/>
             <Setter Property="Padding" Value="14"/>
         </Style>
+
+
     </Application.Styles>
 
     <Application.Resources>
@@ -40,27 +51,45 @@
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
                     <SolidColorBrush x:Key="AppWindowBackgroundBrush">#F5F7FA</SolidColorBrush>
-                    <SolidColorBrush x:Key="AppSidebarBackgroundBrush">#111827</SolidColorBrush>
-                    <SolidColorBrush x:Key="AppHeaderBackgroundBrush">#1F2937</SolidColorBrush>
-                    <SolidColorBrush x:Key="AppHeaderPrimaryTextBrush">White</SolidColorBrush>
-                    <SolidColorBrush x:Key="AppHeaderSecondaryTextBrush">#D1D5DB</SolidColorBrush>
-                    <SolidColorBrush x:Key="AppSidebarTextBrush">#E5E7EB</SolidColorBrush>
-                    <SolidColorBrush x:Key="AppCardBackgroundBrush">White</SolidColorBrush>
+
+                    <SolidColorBrush x:Key="AppSidebarBackgroundBrush">#EEF2F7</SolidColorBrush>
+                    <SolidColorBrush x:Key="AppHeaderBackgroundBrush">#FFFFFF</SolidColorBrush>
+
+                    <SolidColorBrush x:Key="AppHeaderPrimaryTextBrush">#111827</SolidColorBrush>
+                    <SolidColorBrush x:Key="AppHeaderSecondaryTextBrush">#6B7280</SolidColorBrush>
+                    <SolidColorBrush x:Key="AppSidebarTextBrush">#111827</SolidColorBrush>
+
+                    <SolidColorBrush x:Key="AppCardBackgroundBrush">#FFFFFF</SolidColorBrush>
                     <SolidColorBrush x:Key="AppCardBorderBrush">#D0D7DE</SolidColorBrush>
+
                     <SolidColorBrush x:Key="AppSecondaryTextBrush">#4B5563</SolidColorBrush>
-                    <SolidColorBrush x:Key="AppStatusTextBrush">DarkBlue</SolidColorBrush>
+                    <SolidColorBrush x:Key="AppStatusTextBrush">#1D4ED8</SolidColorBrush>
+
+                    <SolidColorBrush x:Key="AppNavButtonBackgroundBrush">#FFFFFF</SolidColorBrush>
+                    <SolidColorBrush x:Key="AppNavButtonForegroundBrush">#111827</SolidColorBrush>
+                    <SolidColorBrush x:Key="AppNavButtonBorderBrush">#D6DCE5</SolidColorBrush>
+                    <SolidColorBrush x:Key="AppNavButtonHoverBrush">#E5ECF5</SolidColorBrush>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
                     <SolidColorBrush x:Key="AppWindowBackgroundBrush">#0F172A</SolidColorBrush>
+
                     <SolidColorBrush x:Key="AppSidebarBackgroundBrush">#111827</SolidColorBrush>
                     <SolidColorBrush x:Key="AppHeaderBackgroundBrush">#1F2937</SolidColorBrush>
+
                     <SolidColorBrush x:Key="AppHeaderPrimaryTextBrush">#F8FAFC</SolidColorBrush>
                     <SolidColorBrush x:Key="AppHeaderSecondaryTextBrush">#CBD5E1</SolidColorBrush>
                     <SolidColorBrush x:Key="AppSidebarTextBrush">#E5E7EB</SolidColorBrush>
+
                     <SolidColorBrush x:Key="AppCardBackgroundBrush">#1E293B</SolidColorBrush>
                     <SolidColorBrush x:Key="AppCardBorderBrush">#475569</SolidColorBrush>
+
                     <SolidColorBrush x:Key="AppSecondaryTextBrush">#CBD5E1</SolidColorBrush>
                     <SolidColorBrush x:Key="AppStatusTextBrush">#93C5FD</SolidColorBrush>
+
+                    <SolidColorBrush x:Key="AppNavButtonBackgroundBrush">#1F2937</SolidColorBrush>
+                    <SolidColorBrush x:Key="AppNavButtonForegroundBrush">#F8FAFC</SolidColorBrush>
+                    <SolidColorBrush x:Key="AppNavButtonBorderBrush">#334155</SolidColorBrush>
+                    <SolidColorBrush x:Key="AppNavButtonHoverBrush">#273449</SolidColorBrush>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
