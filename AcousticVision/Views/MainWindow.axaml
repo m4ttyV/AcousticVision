@@ -40,9 +40,9 @@
                     <TextBlock Text="Навигация" Foreground="{DynamicResource AppSidebarTextBrush}" FontWeight="SemiBold" Margin="0,0,0,8"/>
                     <Button Classes="nav" Content="Обзор" Command="{Binding ShowOverviewCommand}"/>
                     <Button Classes="nav" Content="Помещения" Command="{Binding ShowRoomsCommand}"/>
-                    <Button Classes="nav" Content="Поверхности помещения" Command="{Binding ShowRoomSurfacesCommand}"/>
                     <Button Classes="nav" Content="Материалы" Command="{Binding ShowMaterialsCommand}"/>
                     <Button Classes="nav" Content="Фактуры" Command="{Binding ShowTexturesCommand}"/>
+                    <Button Classes="nav" Content="Поверхности помещения" Command="{Binding ShowRoomSurfacesCommand}"/>
                     <Button Classes="nav" Content="Источники" Command="{Binding ShowSourcesCommand}"/>
                     <Button Classes="nav" Content="Приёмники" Command="{Binding ShowReceiversCommand}"/>
                     <Button Classes="nav" Content="Тест-модели" Command="{Binding ShowTestModelsCommand}"/>
