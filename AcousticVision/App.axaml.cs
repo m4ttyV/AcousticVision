@@ -35,6 +35,7 @@ public partial class App : Application
         serviceCollection.AddScoped<SoundReceiverService>();
         serviceCollection.AddScoped<TestModelService>();
         serviceCollection.AddScoped<AnalysisService>();
+        serviceCollection.AddScoped<RoomPreviewService>();
 
         serviceCollection.AddTransient<MaterialsViewModel>();
         serviceCollection.AddTransient<TexturesViewModel>();
@@ -70,20 +71,30 @@ public partial class App : Application
         if (!db.Materials.Any())
         {
             db.Materials.AddRange(
-                new Models.Material { Name = "Минвата", NoiseCancelation = 0.75 },
-                new Models.Material { Name = "Бетон", NoiseCancelation = 0.05 },
-                new Models.Material { Name = "Ковролин", NoiseCancelation = 0.40 }
+                new Models.Material { Name = "Бетон", NoiseCancelation = 0.03 },
+                new Models.Material { Name = "Кирпич", NoiseCancelation = 0.04 },
+                new Models.Material { Name = "Стекло", NoiseCancelation = 0.06 },
+                new Models.Material { Name = "Дерево", NoiseCancelation = 0.10 },
+                new Models.Material { Name = "Штукатурка", NoiseCancelation = 0.05 },
+                new Models.Material { Name = "Ковролин", NoiseCancelation = 0.40 },
+                new Models.Material { Name = "Минеральная вата", NoiseCancelation = 0.75 },
+                new Models.Material { Name = "Акустическая панель", NoiseCancelation = 0.80 },
+                new Models.Material { Name = "Гипсокартон", NoiseCancelation = 0.08 },
+                new Models.Material { Name = "Тканевое покрытие", NoiseCancelation = 0.55 }
             );
+
             db.SaveChanges();
         }
 
         if (!db.Textures.Any())
         {
             db.Textures.AddRange(
-                new Models.Texture { Name = "Гладкая", NoiseCancelation = 0.08 },
-                new Models.Texture { Name = "Шероховатая", NoiseCancelation = 0.22 },
-                new Models.Texture { Name = "Пористая", NoiseCancelation = 0.45 }
+                new Models.Texture { Name = "Гладкая", NoiseCancelation = 0.05 },
+                new Models.Texture { Name = "Шероховатая", NoiseCancelation = 0.12 },
+                new Models.Texture { Name = "Пористая", NoiseCancelation = 0.30 },
+                new Models.Texture { Name = "Перфорированная", NoiseCancelation = 0.35 }
             );
+
             db.SaveChanges();
         }
 
@@ -128,9 +139,40 @@ public partial class App : Application
         if (!db.RoomModels.Any())
         {
             db.RoomModels.AddRange(
-                new Models.RoomModel { Name = "Аудитория 312", Length = 10.0, Width = 7.0, Height = 3.2 },
-                new Models.RoomModel { Name = "Кабинет 101", Length = 8.0, Width = 5.5, Height = 3.0 }
+                new Models.RoomModel
+                {
+                    Name = "Лекционная аудитория 312",
+                    RoomType = Models.RoomType.LectureRoom,
+                    Length = 10.0,
+                    Width = 7.0,
+                    Height = 3.2
+                },
+                new Models.RoomModel
+                {
+                    Name = "Переговорная A",
+                    RoomType = Models.RoomType.MeetingRoom,
+                    Length = 6.0,
+                    Width = 4.5,
+                    Height = 3.0
+                },
+                new Models.RoomModel
+                {
+                    Name = "Студия 1",
+                    RoomType = Models.RoomType.Studio,
+                    Length = 5.0,
+                    Width = 4.0,
+                    Height = 2.8
+                },
+                new Models.RoomModel
+                {
+                    Name = "Жилая комната",
+                    RoomType = Models.RoomType.ResidentialRoom,
+                    Length = 5.5,
+                    Width = 4.0,
+                    Height = 2.8
+                }
             );
+
             db.SaveChanges();
         }
 
@@ -154,16 +196,25 @@ public partial class App : Application
             db.SaveChanges();
         }
 
-        if (!db.TestModels.Any() && db.RoomModels.Any() && db.SoundSources.Any() && db.SoundReceivers.Any())
+        if (!db.TestModels.Any()
+            && db.RoomModels.Any()
+            && db.SoundSources.Any()
+            && db.SoundReceivers.Any())
         {
+            var room = db.RoomModels.First();
+            var source = db.SoundSources.First();
+            var receiver = db.SoundReceivers.First();
+
             db.TestModels.Add(new Models.TestModel
             {
-                RoomId = db.RoomModels.OrderBy(x => x.Id).First().Id,
-                SourceId = db.SoundSources.OrderBy(x => x.Id).First().Id,
-                ReceiverId = db.SoundReceivers.OrderBy(x => x.Id).First().Id,
-                SourceLocation = "(1.0; 1.0; 1.5)",
-                ReceiverLocation = "(4.0; 3.0; 1.2)"
+                RoomId = room.Id,
+                SourceId = source.Id,
+                ReceiverId = receiver.Id,
+                SourceLocation = "(2.0; 1.5; 1.6)",
+                ReceiverLocation = "(6.0; 2.0; 1.2)",
+                AnalysisMethod = Models.AnalysisMethod.Auto
             });
+
             db.SaveChanges();
         }
     }

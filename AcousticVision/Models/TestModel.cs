@@ -1,3 +1,5 @@
+using AcousticVision.Common;
+
 namespace AcousticVision.Models;
 
 public class TestModel
@@ -16,5 +18,19 @@ public class TestModel
     public string SourceLocation { get; set; } = string.Empty;
     public string ReceiverLocation { get; set; } = string.Empty;
 
-    public string DisplayName => $"{Room?.Name ?? "—"} / {Source?.Name ?? "—"} {SourceLocation} / {Receiver?.Name ?? "—"} {ReceiverLocation}";
+    public AnalysisMethod AnalysisMethod { get; set; } = AnalysisMethod.Auto;
+
+    public string AnalysisMethodDisplayName => AnalysisMethod.ToDisplayName();
+
+    public string DisplayName
+    {
+        get
+        {
+            var roomName = Room?.Name ?? "Без помещения";
+            var sourceName = Source?.Name ?? "Без источника";
+            var receiverName = Receiver?.Name ?? "Без приёмника";
+
+            return $"{roomName} / {sourceName} / {receiverName}";
+        }
+    }
 }

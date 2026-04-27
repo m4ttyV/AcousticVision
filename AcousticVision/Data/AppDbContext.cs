@@ -43,8 +43,18 @@ public class AppDbContext : DbContext
         {
             entity.ToTable("RoomModels");
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.Name).IsRequired().HasMaxLength(250);
+
+            entity.Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(250);
+
             entity.HasIndex(x => x.Name).IsUnique();
+
+            entity.Property(x => x.RoomType)
+                .HasConversion<string>()
+                .IsRequired()
+                .HasMaxLength(50);
+
             entity.Property(x => x.Length).IsRequired();
             entity.Property(x => x.Width).IsRequired();
             entity.Property(x => x.Height).IsRequired();
@@ -95,9 +105,19 @@ public class AppDbContext : DbContext
         {
             entity.ToTable("TestModels");
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.SourceLocation).IsRequired().HasMaxLength(100);
-            entity.Property(x => x.ReceiverLocation).IsRequired().HasMaxLength(100);
-            entity.HasIndex(x => new { x.RoomId, x.SourceId, x.ReceiverId, x.SourceLocation, x.ReceiverLocation }).IsUnique();
+
+            entity.Property(x => x.SourceLocation)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(x => x.ReceiverLocation)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(x => x.AnalysisMethod)
+                .HasConversion<string>()
+                .IsRequired()
+                .HasMaxLength(20);
 
             entity.HasOne(x => x.Room)
                 .WithMany(x => x.TestModels)
@@ -105,14 +125,23 @@ public class AppDbContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(x => x.Source)
-                .WithMany(x => x.TestModels)
+                .WithMany()
                 .HasForeignKey(x => x.SourceId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             entity.HasOne(x => x.Receiver)
-                .WithMany(x => x.TestModels)
+                .WithMany()
                 .HasForeignKey(x => x.ReceiverId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasIndex(x => new
+            {
+                x.RoomId,
+                x.SourceId,
+                x.ReceiverId,
+                x.SourceLocation,
+                x.ReceiverLocation
+            }).IsUnique();
         });
     }
 }

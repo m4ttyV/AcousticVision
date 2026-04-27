@@ -1,4 +1,5 @@
 namespace AcousticVision.Models;
+using AcousticVision.Common;
 
 public class RoomSurface
 {
@@ -12,4 +13,5 @@ public class RoomSurface
 
     public int TextureId { get; set; }
     public Texture? Texture { get; set; }
+    public string PositionDisplayName => Position.ToDisplayName();
 }

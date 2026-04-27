@@ -20,6 +20,17 @@
                 <TextBox Watermark="Название помещения"
                          Text="{Binding NewRoomName}"/>
 
+                <TextBlock Text="Тип помещения"/>
+
+                <ComboBox ItemsSource="{Binding RoomTypeOptions}"
+                          SelectedItem="{Binding SelectedRoomTypeOption}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding DisplayName}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
                 <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
                     <TextBox Grid.Column="0"
                              Watermark="Длина"
@@ -35,13 +46,16 @@
                 </Grid>
 
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                    <Button Classes="action" Content="Добавить"
+                    <Button Classes="action"
+                            Content="Добавить"
                             Command="{Binding AddRoomCommand}"/>
 
-                    <Button Classes="action" Content="Обновить список"
+                    <Button Classes="action"
+                            Content="Обновить список"
                             Command="{Binding LoadCommand}"/>
 
-                    <Button Classes="action" Content="Удалить выбранное"
+                    <Button Classes="action"
+                            Content="Удалить выбранное"
                             Command="{Binding DeleteSelectedCommand}"/>
                 </StackPanel>
             </StackPanel>
@@ -58,6 +72,7 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="70"/>
                         <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"/>
+                        <DataGridTextColumn Header="Тип" Binding="{Binding RoomTypeDisplayName}" Width="180"/>
                         <DataGridTextColumn Header="Длина" Binding="{Binding Length}" Width="100"/>
                         <DataGridTextColumn Header="Ширина" Binding="{Binding Width}" Width="100"/>
                         <DataGridTextColumn Header="Высота" Binding="{Binding Height}" Width="100"/>

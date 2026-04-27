@@ -8,28 +8,47 @@ public class RoomModelService
 {
     private readonly AppDbContext _dbContext;
 
-    public RoomModelService(AppDbContext dbContext) => _dbContext = dbContext;
-
-    public Task<List<RoomModel>> GetAllAsync() =>
-        _dbContext.RoomModels.OrderBy(x => x.Name).ToListAsync();
-
-    public async Task AddAsync(string name, double length, double width, double height)
+    public RoomModelService(AppDbContext dbContext)
     {
-        _dbContext.RoomModels.Add(new RoomModel
+        _dbContext = dbContext;
+    }
+
+    public async Task<List<RoomModel>> GetAllAsync()
+    {
+        return await _dbContext.RoomModels
+            .OrderBy(x => x.Name)
+            .ToListAsync();
+    }
+
+    public async Task<RoomModel> AddAsync(
+        string name,
+        RoomType roomType,
+        double length,
+        double width,
+        double height)
+    {
+        var room = new RoomModel
         {
             Name = name.Trim(),
+            RoomType = roomType,
             Length = length,
             Width = width,
             Height = height
-        });
+        };
+
+        _dbContext.RoomModels.Add(room);
         await _dbContext.SaveChangesAsync();
+
+        return room;
     }
 
     public async Task DeleteAsync(int id)
     {
-        var item = await _dbContext.RoomModels.FirstOrDefaultAsync(x => x.Id == id);
-        if (item is null) return;
-        _dbContext.RoomModels.Remove(item);
+        var room = await _dbContext.RoomModels.FirstOrDefaultAsync(x => x.Id == id);
+        if (room is null)
+            return;
+
+        _dbContext.RoomModels.Remove(room);
         await _dbContext.SaveChangesAsync();
     }
 }

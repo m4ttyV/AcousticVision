@@ -1,13 +1,21 @@
-using System.Collections.ObjectModel;
+using AcousticVision.Common;
 using AcousticVision.Models;
 using AcousticVision.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.Collections.ObjectModel;
+using static AcousticVision.ViewModels.TestModelsViewModel;
 
 namespace AcousticVision.ViewModels;
 
 public partial class TestModelsViewModel : ViewModelBase
 {
+    public sealed class AnalysisMethodOption
+    {
+        public AnalysisMethod Value { get; init; }
+        public string DisplayName { get; init; } = string.Empty;
+    }
+
     private readonly TestModelService _testModelService;
     private readonly RoomModelService _roomModelService;
     private readonly SoundSourceService _soundSourceService;
@@ -26,6 +34,15 @@ public partial class TestModelsViewModel : ViewModelBase
     private ObservableCollection<SoundReceiver> _receivers = new();
 
     [ObservableProperty]
+    private ObservableCollection<AnalysisMethodOption> _analysisMethodOptions =
+        new(Enum.GetValues<AnalysisMethod>()
+            .Select(x => new AnalysisMethodOption
+            {
+                Value = x,
+                DisplayName = x.ToDisplayName()
+            }));
+
+    [ObservableProperty]
     private TestModel? _selectedTestModel;
 
     [ObservableProperty]
@@ -36,6 +53,9 @@ public partial class TestModelsViewModel : ViewModelBase
 
     [ObservableProperty]
     private SoundReceiver? _selectedReceiver;
+
+    [ObservableProperty]
+    private AnalysisMethodOption? _selectedAnalysisMethodOption;
 
     [ObservableProperty]
     private string _newSourceLocation = string.Empty;
@@ -56,6 +76,8 @@ public partial class TestModelsViewModel : ViewModelBase
         _roomModelService = roomModelService;
         _soundSourceService = soundSourceService;
         _soundReceiverService = soundReceiverService;
+
+        SelectedAnalysisMethodOption = AnalysisMethodOptions.FirstOrDefault();
     }
 
     public async Task InitializeAsync()
@@ -83,11 +105,8 @@ public partial class TestModelsViewModel : ViewModelBase
         if (SelectedReceiver is null && Receivers.Count > 0)
             SelectedReceiver = Receivers[0];
 
-        if (string.IsNullOrWhiteSpace(NewSourceLocation) && SelectedRoom is not null)
-            NewSourceLocation = "(1.0; 1.0; 1.5)";
-
-        if (string.IsNullOrWhiteSpace(NewReceiverLocation) && SelectedRoom is not null)
-            NewReceiverLocation = "(2.0; 1.5; 1.2)";
+        if (SelectedAnalysisMethodOption is null && AnalysisMethodOptions.Count > 0)
+            SelectedAnalysisMethodOption = AnalysisMethodOptions[0];
     }
 
     [RelayCommand]
@@ -128,6 +147,12 @@ public partial class TestModelsViewModel : ViewModelBase
             return;
         }
 
+        if (SelectedAnalysisMethodOption is null)
+        {
+            StatusMessage = "Выберите метод расчёта.";
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(NewSourceLocation))
         {
             StatusMessage = "Введите координаты источника.";
@@ -147,7 +172,12 @@ public partial class TestModelsViewModel : ViewModelBase
                 SelectedSource.Id,
                 SelectedReceiver.Id,
                 NewSourceLocation,
-                NewReceiverLocation);
+                NewReceiverLocation,
+                SelectedAnalysisMethodOption.Value);
+
+            NewSourceLocation = string.Empty;
+            NewReceiverLocation = string.Empty;
+            SelectedAnalysisMethodOption = AnalysisMethodOptions.FirstOrDefault();
 
             await LoadTestModelsAsync();
             StatusMessage = "Тестовая модель успешно добавлена.";

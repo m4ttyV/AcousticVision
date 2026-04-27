@@ -10,12 +10,16 @@ public partial class AnalysisViewModel : ViewModelBase
 {
     private readonly AnalysisService _analysisService;
     private readonly TestModelService _testModelService;
+    private readonly RoomPreviewService _roomPreviewService;
 
     [ObservableProperty]
     private ObservableCollection<TestModel> _testModels = new();
 
     [ObservableProperty]
     private TestModel? _selectedTestModel;
+
+    [ObservableProperty]
+    private RoomPreviewViewModel? _preview;
 
     [ObservableProperty]
     private string _statusMessage = string.Empty;
@@ -56,10 +60,14 @@ public partial class AnalysisViewModel : ViewModelBase
     [ObservableProperty]
     private string _resultRecommendation = string.Empty;
 
-    public AnalysisViewModel(AnalysisService analysisService, TestModelService testModelService)
+    [ObservableProperty]
+    private string _resultFormula = string.Empty;
+
+    public AnalysisViewModel(AnalysisService analysisService, TestModelService testModelService, RoomPreviewService roomPreviewService)
     {
         _analysisService = analysisService;
         _testModelService = testModelService;
+        _roomPreviewService = roomPreviewService;
     }
 
     public async Task InitializeAsync()
@@ -78,6 +86,7 @@ public partial class AnalysisViewModel : ViewModelBase
             if (SelectedTestModel is null && TestModels.Count > 0)
                 SelectedTestModel = TestModels[0];
 
+            await RefreshPreviewAsync();
             StatusMessage = $"Загружено тестовых моделей: {TestModels.Count}";
         }
         catch (Exception ex)
@@ -120,12 +129,46 @@ public partial class AnalysisViewModel : ViewModelBase
             ResultAbsorption = $"{result.EquivalentAbsorptionArea:F2} м²";
             ResultRt60 = $"{result.Rt60:F3} с";
             ResultRecommendation = result.Recommendation;
-
             StatusMessage = result.Message;
+            ResultFormula = result.FormulaName;
         }
         catch (Exception ex)
         {
             StatusMessage = $"Ошибка анализа: {ex.Message}";
+        }
+    }
+
+
+    partial void OnSelectedTestModelChanged(TestModel? value)
+    {
+        _ = RefreshPreviewAsync();
+    }
+
+    private async Task RefreshPreviewAsync()
+    {
+        if (SelectedTestModel is null)
+        {
+            Preview = new RoomPreviewViewModel
+            {
+                IsAvailable = false,
+                Title = "Схема помещения",
+                Summary = "Выберите тестовую модель для отображения схемы."
+            };
+            return;
+        }
+
+        try
+        {
+            Preview = await _roomPreviewService.BuildForTestModelAsync(SelectedTestModel.Id);
+        }
+        catch
+        {
+            Preview = new RoomPreviewViewModel
+            {
+                IsAvailable = false,
+                Title = "Схема помещения",
+                Summary = "Не удалось сформировать визуализацию помещения."
+            };
         }
     }
 
@@ -142,6 +185,8 @@ public partial class AnalysisViewModel : ViewModelBase
         ResultVolume = string.Empty;
         ResultAbsorption = string.Empty;
         ResultRt60 = string.Empty;
+        ResultFormula = string.Empty; 
         ResultRecommendation = string.Empty;
+
     }
 }

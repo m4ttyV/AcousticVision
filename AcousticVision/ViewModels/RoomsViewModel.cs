@@ -1,19 +1,38 @@
-﻿using AcousticVision.Models;
+﻿using AcousticVision.Common;
+using AcousticVision.Models;
 using AcousticVision.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
+using static AcousticVision.ViewModels.RoomsViewModel;
 
 namespace AcousticVision.ViewModels;
 
 public partial class RoomsViewModel : ViewModelBase
 {
+    public sealed class RoomTypeOption
+    {
+        public RoomType Value { get; init; }
+        public string DisplayName { get; init; } = string.Empty;
+    }
+
     private readonly RoomModelService _roomModelService;
 
     [ObservableProperty]
     private ObservableCollection<RoomModel> _rooms = new();
+
+    [ObservableProperty]
+    private ObservableCollection<RoomTypeOption> _roomTypeOptions =
+        new(RoomTypeRequirements
+            .GetAllRoomTypes()
+            .Select(x => new RoomTypeOption
+            {
+                Value = x,
+                DisplayName = x.ToDisplayName()
+            }));
+
+    [ObservableProperty]
+    private RoomTypeOption? _selectedRoomTypeOption;
 
     [ObservableProperty]
     private RoomModel? _selectedRoom;
@@ -36,6 +55,7 @@ public partial class RoomsViewModel : ViewModelBase
     public RoomsViewModel(RoomModelService roomModelService)
     {
         _roomModelService = roomModelService;
+        SelectedRoomTypeOption = RoomTypeOptions.FirstOrDefault();
     }
 
     public async Task InitializeAsync()
@@ -70,6 +90,12 @@ public partial class RoomsViewModel : ViewModelBase
             return;
         }
 
+        if (SelectedRoomTypeOption is null)
+        {
+            StatusMessage = "Выберите тип помещения.";
+            return;
+        }
+
         if (!TryParsePositive(NewLength, out var length))
         {
             StatusMessage = "Введите корректную длину помещения (> 0).";
@@ -90,12 +116,18 @@ public partial class RoomsViewModel : ViewModelBase
 
         try
         {
-            await _roomModelService.AddAsync(name, length, width, height);
+            await _roomModelService.AddAsync(
+                name,
+                SelectedRoomTypeOption.Value,
+                length,
+                width,
+                height);
 
             NewRoomName = string.Empty;
             NewLength = string.Empty;
             NewWidth = string.Empty;
             NewHeight = string.Empty;
+            SelectedRoomTypeOption = RoomTypeOptions.FirstOrDefault();
 
             await LoadAsync();
             StatusMessage = "Помещение успешно добавлено.";

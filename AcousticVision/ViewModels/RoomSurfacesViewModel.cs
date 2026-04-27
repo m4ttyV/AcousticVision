@@ -1,8 +1,10 @@
-using System.Collections.ObjectModel;
+using AcousticVision.Common;
 using AcousticVision.Models;
 using AcousticVision.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.Collections.ObjectModel;
+using static AcousticVision.ViewModels.RoomSurfacesViewModel;
 
 namespace AcousticVision.ViewModels;
 
@@ -17,12 +19,20 @@ public partial class RoomSurfacesViewModel : ViewModelBase
     [ObservableProperty] private ObservableCollection<RoomModel> _rooms = new();
     [ObservableProperty] private ObservableCollection<Material> _materials = new();
     [ObservableProperty] private ObservableCollection<Texture> _textures = new();
-    [ObservableProperty] private ObservableCollection<string> _positions = new(RoomSurfaceService.AllowedPositions);
+    [ObservableProperty]
+    private ObservableCollection<PositionOption> _positionOptions =
+    new(RoomSurfaceService.AllowedPositions.Select(x => new PositionOption
+    {
+        Value = x,
+        DisplayName = x.ToDisplayName()
+    }));
+
+    [ObservableProperty]
+    private PositionOption? _selectedPositionOption;
     [ObservableProperty] private RoomSurface? _selectedSurface;
     [ObservableProperty] private RoomModel? _selectedRoom;
     [ObservableProperty] private Material? _selectedMaterial;
     [ObservableProperty] private Texture? _selectedTexture;
-    [ObservableProperty] private string? _selectedPosition;
     [ObservableProperty] private string _statusMessage = string.Empty;
 
     public RoomSurfacesViewModel(RoomSurfaceService roomSurfaceService, RoomModelService roomModelService, MaterialService materialService, TextureService textureService)
@@ -31,6 +41,12 @@ public partial class RoomSurfacesViewModel : ViewModelBase
         _roomModelService = roomModelService;
         _materialService = materialService;
         _textureService = textureService;
+    }
+
+    public sealed class PositionOption
+    {
+        public string Value { get; init; } = string.Empty;
+        public string DisplayName { get; init; } = string.Empty;
     }
 
     public async Task InitializeAsync()
@@ -48,7 +64,7 @@ public partial class RoomSurfacesViewModel : ViewModelBase
         SelectedRoom ??= Rooms.FirstOrDefault();
         SelectedMaterial ??= Materials.FirstOrDefault();
         SelectedTexture ??= Textures.FirstOrDefault();
-        SelectedPosition ??= Positions.FirstOrDefault();
+        SelectedPositionOption ??= PositionOptions.FirstOrDefault();
     }
 
     [RelayCommand]
@@ -85,7 +101,7 @@ public partial class RoomSurfacesViewModel : ViewModelBase
             StatusMessage = "Выберите фактуру.";
             return;
         }
-        if (string.IsNullOrWhiteSpace(SelectedPosition))
+        if (SelectedPositionOption is null)
         {
             StatusMessage = "Выберите позицию.";
             return;
@@ -93,7 +109,7 @@ public partial class RoomSurfacesViewModel : ViewModelBase
 
         try
         {
-            await _roomSurfaceService.AddOrUpdateAsync(SelectedRoom.Id, SelectedPosition, SelectedMaterial.Id, SelectedTexture.Id);
+            await _roomSurfaceService.AddOrUpdateAsync(SelectedRoom.Id, SelectedPositionOption.Value, SelectedMaterial.Id, SelectedTexture.Id);
             await LoadSurfacesAsync();
             StatusMessage = "Поверхность сохранена.";
         }

@@ -14,6 +14,8 @@ public class AnalysisResult
     public string SourceLocation { get; set; } = string.Empty;
     public string ReceiverLocation { get; set; } = string.Empty;
 
+    public string FormulaName { get; set; } = string.Empty;
+
     public double Volume { get; set; }
     public double EquivalentAbsorptionArea { get; set; }
     public double Rt60 { get; set; }

@@ -20,7 +20,14 @@
                 </ComboBox>
 
                 <TextBlock Text="Позиция"/>
-                <ComboBox ItemsSource="{Binding Positions}" SelectedItem="{Binding SelectedPosition}"/>
+               <ComboBox ItemsSource="{Binding PositionOptions}"
+                          SelectedItem="{Binding SelectedPositionOption}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding DisplayName}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
 
                 <TextBlock Text="Материал"/>
                 <ComboBox ItemsSource="{Binding Materials}" SelectedItem="{Binding SelectedMaterial}">
@@ -51,7 +58,7 @@
                 <DataGrid ItemsSource="{Binding Surfaces}" SelectedItem="{Binding SelectedSurface}" AutoGenerateColumns="False" Height="350">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Помещение" Binding="{Binding Room.Name}" Width="180"/>
-                        <DataGridTextColumn Header="Позиция" Binding="{Binding Position}" Width="120"/>
+                        <DataGridTextColumn Header="Позиция" Binding="{Binding PositionDisplayName}" Width="160"/>
                         <DataGridTextColumn Header="Материал" Binding="{Binding Material.Name}" Width="180"/>
                         <DataGridTextColumn Header="Фактура" Binding="{Binding Texture.Name}" Width="180"/>
                     </DataGrid.Columns>

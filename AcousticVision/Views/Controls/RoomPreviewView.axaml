@@ -1,0 +1,142 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:AcousticVision.ViewModels"
+             x:Class="AcousticVision.Views.Controls.RoomPreviewView"
+             x:DataType="vm:RoomPreviewViewModel">
+
+    <Border Classes="card">
+        <StackPanel Spacing="10">
+            <TextBlock Text="{Binding Title}" FontWeight="Bold"/>
+            <TextBlock Text="{Binding Summary}"
+                       Foreground="{DynamicResource AppSecondaryTextBrush}"
+                       TextWrapping="Wrap"/>
+
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+                <Border Width="{Binding CanvasWidth}"
+                        Height="{Binding CanvasHeight}"
+                        Background="{DynamicResource AppWindowBackgroundBrush}"
+                        BorderBrush="{DynamicResource AppCardBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="8">
+                    <Canvas Width="{Binding CanvasWidth}" Height="{Binding CanvasHeight}">
+                        <Rectangle Canvas.Left="{Binding RoomX}"
+                                   Canvas.Top="{Binding RoomY}"
+                                   Width="{Binding RoomWidth}"
+                                   Height="{Binding RoomHeight}"
+                                   Fill="{DynamicResource AppCardBackgroundBrush}"
+                                   Stroke="{DynamicResource AppCardBorderBrush}"
+                                   StrokeThickness="1"/>
+
+                        <Rectangle Canvas.Left="{Binding RoomX}"
+                                   Canvas.Top="{Binding RoomY}"
+                                   Width="{Binding RoomWidth}"
+                                   Height="{Binding WallThickness}"
+                                   Fill="{Binding NorthBrush}"/>
+
+                        <Rectangle Canvas.Left="{Binding RoomX}"
+                                   Canvas.Top="{Binding SouthWallY}"
+                                   Width="{Binding RoomWidth}"
+                                   Height="{Binding WallThickness}"
+                                   Fill="{Binding SouthBrush}"/>
+
+                        <Rectangle Canvas.Left="{Binding RoomX}"
+                                   Canvas.Top="{Binding RoomY}"
+                                   Width="{Binding WallThickness}"
+                                   Height="{Binding RoomHeight}"
+                                   Fill="{Binding WestBrush}"/>
+
+                        <Rectangle Canvas.Left="{Binding EastWallX}"
+                                   Canvas.Top="{Binding RoomY}"
+                                   Width="{Binding WallThickness}"
+                                   Height="{Binding RoomHeight}"
+                                   Fill="{Binding EastBrush}"/>
+
+                        <Border Canvas.Left="{Binding SourceX}"
+                                Canvas.Top="{Binding SourceY}"
+                                Width="{Binding MarkerSize}"
+                                Height="{Binding MarkerSize}"
+                                Background="#EF4444"
+                                CornerRadius="999">
+                            <TextBlock Text="S"
+                                       FontSize="10"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Foreground="White"/>
+                        </Border>
+
+                        <Border Canvas.Left="{Binding ReceiverX}"
+                                Canvas.Top="{Binding ReceiverY}"
+                                Width="{Binding MarkerSize}"
+                                Height="{Binding MarkerSize}"
+                                Background="#10B981"
+                                CornerRadius="999">
+                            <TextBlock Text="R"
+                                       FontSize="10"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Foreground="White"/>
+                        </Border>
+
+                        <TextBlock Canvas.Left="{Binding RoomX}"
+                                   Canvas.Top="2"
+                                   Text="North"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource AppSecondaryTextBrush}"/>
+
+                        <TextBlock Canvas.Left="{Binding RoomX}"
+                                   Canvas.Top="{Binding SouthLabelY}"
+                                   Text="South"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource AppSecondaryTextBrush}"/>
+
+                        <TextBlock Canvas.Left="2"
+                                   Canvas.Top="{Binding RoomY}"
+                                   Text="West"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource AppSecondaryTextBrush}"/>
+
+                        <TextBlock Canvas.Left="{Binding EastLabelX}"
+                                   Canvas.Top="{Binding RoomY}"
+                                   Text="East"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource AppSecondaryTextBrush}"/>
+                    </Canvas>
+                </Border>
+
+                <StackPanel Grid.Column="1" Spacing="8" Width="320">
+                    <TextBlock Text="Легенда поверхностей" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding NorthLabel}" TextWrapping="Wrap"/>
+                    <TextBlock Text="{Binding SouthLabel}" TextWrapping="Wrap"/>
+                    <TextBlock Text="{Binding EastLabel}" TextWrapping="Wrap"/>
+                    <TextBlock Text="{Binding WestLabel}" TextWrapping="Wrap"/>
+
+                    <Separator Margin="0,2"/>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                        <Border Classes="card" Background="{Binding FloorBrush}" BorderThickness="1">
+                            <TextBlock Text="{Binding FloorLabel}" TextWrapping="Wrap"/>
+                        </Border>
+                        <Border Grid.Column="1" Classes="card" Background="{Binding CeilingBrush}" BorderThickness="1">
+                            <TextBlock Text="{Binding CeilingLabel}" TextWrapping="Wrap"/>
+                        </Border>
+                    </Grid>
+
+                    <Separator Margin="0,2"/>
+
+                    <TextBlock Text="{Binding SourceInfo}" TextWrapping="Wrap"/>
+                    <TextBlock Text="{Binding ReceiverInfo}" TextWrapping="Wrap"/>
+                    <TextBlock Text="{Binding LegendText}"
+                               Foreground="{DynamicResource AppSecondaryTextBrush}"
+                               TextWrapping="Wrap"/>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+    </Border>
+</UserControl>

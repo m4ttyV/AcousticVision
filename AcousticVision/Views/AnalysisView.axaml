@@ -2,10 +2,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:AcousticVision.ViewModels"
              xmlns:models="using:AcousticVision.Models"
+             xmlns:controls="using:AcousticVision.Views.Controls"
              x:Class="AcousticVision.Views.AnalysisView"
              x:DataType="vm:AnalysisViewModel">
 
-    <Grid RowDefinitions="Auto,Auto,*,Auto"
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto"
           ColumnDefinitions="*"
           RowSpacing="12">
 
@@ -42,9 +43,16 @@
 
         <Border Grid.Row="2" Classes="card">
             <StackPanel Spacing="8">
+                <TextBlock Text="Визуализация конфигурации" FontWeight="Bold"/>
+                <controls:RoomPreviewView DataContext="{Binding Preview}"/>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="3" Classes="card">
+            <StackPanel Spacing="8">
                 <TextBlock Text="Результат анализа" FontWeight="Bold"/>
 
-                <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
                       ColumnDefinitions="240,*"
                       RowSpacing="6"
                       ColumnSpacing="12">
@@ -67,28 +75,33 @@
                     <TextBlock Grid.Row="5" Grid.Column="0" Text="Расстояние источник–приёмник:" FontWeight="Bold"/>
                     <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding ResultDistance}"/>
 
-                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Ослабление прямого сигнала:" FontWeight="Bold"/>
-                    <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding ResultAttenuation}"/>
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Использованная формула:" FontWeight="Bold"/>
+                    <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding ResultFormula}"/>
 
-                    <TextBlock Grid.Row="7" Grid.Column="0" Text="Условный уровень в точке:" FontWeight="Bold"/>
-                    <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding ResultDirectLevel}"/>
+                    <TextBlock Grid.Row="7" Grid.Column="0" Text="Ослабление прямого сигнала:" FontWeight="Bold"/>
+                    <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding ResultAttenuation}"/>
 
-                    <TextBlock Grid.Row="8" Grid.Column="0" Text="Объём помещения:" FontWeight="Bold"/>
-                    <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding ResultVolume}"/>
+                    <TextBlock Grid.Row="8" Grid.Column="0" Text="Условный уровень в точке:" FontWeight="Bold"/>
+                    <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding ResultDirectLevel}"/>
 
-                    <TextBlock Grid.Row="9" Grid.Column="0" Text="Эквивалентное поглощение:" FontWeight="Bold"/>
-                    <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding ResultAbsorption}"/>
+                    <TextBlock Grid.Row="9" Grid.Column="0" Text="Объём помещения:" FontWeight="Bold"/>
+                    <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding ResultVolume}"/>
 
-                    <TextBlock Grid.Row="10" Grid.Column="0" Text="RT60 / рекомендация:" FontWeight="Bold"/>
-                    <StackPanel Grid.Row="10" Grid.Column="1" Spacing="4">
-                        <TextBlock Text="{Binding ResultRt60}" FontWeight="SemiBold"/>
+                    <TextBlock Grid.Row="10" Grid.Column="0" Text="Эквивалентное поглощение:" FontWeight="Bold"/>
+                    <TextBlock Grid.Row="10" Grid.Column="1" Text="{Binding ResultAbsorption}"/>
+
+                    <TextBlock Grid.Row="11" Grid.Column="0" Text="RT60:" FontWeight="Bold"/>
+                    <TextBlock Grid.Row="11" Grid.Column="1" Text="{Binding ResultRt60}" FontWeight="SemiBold"/>
+
+                    <TextBlock Grid.Row="12" Grid.Column="0" Text="Рекомендация:" FontWeight="Bold"/>
+                    <StackPanel Grid.Row="12" Grid.Column="1" Spacing="4">
                         <TextBlock Text="{Binding ResultRecommendation}" TextWrapping="Wrap"/>
                     </StackPanel>
                 </Grid>
             </StackPanel>
         </Border>
 
-        <TextBlock Grid.Row="3"
+        <TextBlock Grid.Row="4"
                    Text="{Binding StatusMessage}"
                    Foreground="{DynamicResource AppStatusTextBrush}"
                    TextWrapping="Wrap"/>

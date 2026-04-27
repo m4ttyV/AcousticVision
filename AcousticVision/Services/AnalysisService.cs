@@ -78,6 +78,7 @@ public class AnalysisService
         var volume = room.Length * room.Width * room.Height;
 
         double equivalentAbsorptionArea = 0;
+        double totalSurfaceArea = 0;
 
         foreach (var surface in surfaces)
         {
@@ -87,26 +88,35 @@ public class AnalysisService
             if (area <= 0)
                 continue;
 
-            // Пока в RT60 участвует только материал.
             var alpha = Clamp01(surface.Material?.NoiseCancelation ?? 0.0);
 
             equivalentAbsorptionArea += area * alpha;
+            totalSurfaceArea += area;
         }
 
         if (equivalentAbsorptionArea <= 0)
             return Fail("Суммарное эквивалентное звукопоглощение оказалось нулевым.");
 
-        // Формула Сабина
-        var rt60 = 0.161 * volume / equivalentAbsorptionArea;
+        if (totalSurfaceArea <= 0)
+            return Fail("Суммарная площадь поверхностей оказалась нулевой.");
 
-        // Локальный расчёт по координатам
+        var averageAbsorption = Clamp01(equivalentAbsorptionArea / totalSurfaceArea);
+
+        var resolvedMethod = ResolveAnalysisMethod(testModel.AnalysisMethod, averageAbsorption);
+
+        var rt60 = resolvedMethod switch
+        {
+            AnalysisMethod.Sabine => CalculateSabine(volume, equivalentAbsorptionArea),
+            AnalysisMethod.Eyring => CalculateEyring(volume, totalSurfaceArea, averageAbsorption),
+            _ => CalculateSabine(volume, equivalentAbsorptionArea)
+        };
+
+        var roomRequirement = RoomTypeRequirements.Get(room.RoomType);
+
         var distance = CoordinateHelper.Distance(sourcePoint, receiverPoint);
         var effectiveDistance = Math.Max(distance, 0.5);
 
-        // Ослабление прямого сигнала с расстоянием
         var attenuationDb = 20.0 * Math.Log10(effectiveDistance);
-
-        // Условный уровень сигнала в точке приёмника
         var sourceLevel = testModel.Source.Volume;
         var estimatedDirectLevelDb = sourceLevel - attenuationDb;
 
@@ -115,19 +125,47 @@ public class AnalysisService
             IsSuccess = true,
             Message = "Расчёт успешно выполнен.",
             TestModelId = testModel.Id,
-            RoomName = testModel.Room.Name,
+            RoomName = room.Name,
             SourceName = testModel.Source.Name,
             ReceiverName = testModel.Receiver.Name,
             SourceLocation = testModel.SourceLocation,
             ReceiverLocation = testModel.ReceiverLocation,
+            FormulaName = resolvedMethod.ToDisplayName(),
             Volume = volume,
             EquivalentAbsorptionArea = equivalentAbsorptionArea,
             Rt60 = rt60,
             SourceReceiverDistance = distance,
             DistanceAttenuationDb = attenuationDb,
             EstimatedDirectLevelDb = estimatedDirectLevelDb,
-            Recommendation = BuildRecommendation(rt60, distance, estimatedDirectLevelDb)
+            Recommendation = BuildRecommendation(
+                room.RoomType,
+                roomRequirement.MinRt60,
+                roomRequirement.MaxRt60,
+                rt60,
+                distance,
+                estimatedDirectLevelDb)
         };
+    }
+
+    private static AnalysisMethod ResolveAnalysisMethod(AnalysisMethod selectedMethod, double averageAbsorption)
+    {
+        if (selectedMethod != AnalysisMethod.Auto)
+            return selectedMethod;
+
+        return averageAbsorption >= 0.20
+            ? AnalysisMethod.Eyring
+            : AnalysisMethod.Sabine;
+    }
+
+    private static double CalculateSabine(double volume, double equivalentAbsorptionArea)
+    {
+        return 0.161 * volume / equivalentAbsorptionArea;
+    }
+
+    private static double CalculateEyring(double volume, double totalSurfaceArea, double averageAbsorption)
+    {
+        var safeAverageAbsorption = Math.Min(0.999, Math.Max(0.0001, averageAbsorption));
+        return 0.161 * volume / (-totalSurfaceArea * Math.Log(1.0 - safeAverageAbsorption));
     }
 
     private static double GetSurfaceArea(RoomModel room, string position)
@@ -160,67 +198,49 @@ public class AnalysisService
         };
     }
 
-    private static string BuildRecommendation(double rt60, double distance, double directLevelDb)
+    private static string BuildRecommendation(
+        RoomType roomType,
+        double minRt60,
+        double maxRt60,
+        double rt60,
+        double distance,
+        double directLevelDb)
     {
-        var rtComment = GetRtComment(rt60);
-        var distanceComment = GetDistanceComment(distance);
-        var levelComment = GetDirectLevelComment(directLevelDb);
+        var roomTypeName = roomType.ToDisplayName();
 
-        return $"{rtComment} {distanceComment} {levelComment}";
-    }
+        string rtText;
 
-    private static string GetRtComment(double rt60)
-    {
-        if (rt60 < 0.5)
+        if (rt60 < minRt60)
         {
-            return "Время реверберации ниже рекомендуемого диапазона для речевой связи. Помещение может восприниматься как акустически «сухое», однако разборчивость речи, вероятно, останется высокой.";
+            rtText =
+                $"Для типа помещения «{roomTypeName}» полученное время реверберации ниже рекомендуемого диапазона. Это может привести к избыточно сухому звучанию, хотя разборчивость речи, вероятно, останется высокой.";
+        }
+        else if (rt60 > maxRt60)
+        {
+            rtText =
+                $"Для типа помещения «{roomTypeName}» полученное время реверберации превышает рекомендуемый диапазон. Это может ухудшать разборчивость речи и снижать акустический комфорт.";
+        }
+        else
+        {
+            rtText =
+                $"Для типа помещения «{roomTypeName}» полученное время реверберации находится в рекомендуемом диапазоне.";
         }
 
-        if (rt60 <= 1.0)
+        string distanceText = distance switch
         {
-            return "Время реверберации находится в рекомендуемом диапазоне для восприятия речи. Акустические условия помещения в целом можно считать благоприятными.";
-        }
+            < 1.0 => "Источник и приёмник расположены очень близко друг к другу, поэтому влияние расстояния на прямой сигнал минимально.",
+            <= 3.0 => "Расстояние между источником и приёмником можно считать умеренным.",
+            <= 5.0 => "Расстояние между источником и приёмником заметное, поэтому уровень прямого сигнала снижается.",
+            _ => "Источник и приёмник расположены на значительном расстоянии, что приводит к выраженному ослаблению прямого сигнала."
+        };
 
-        if (rt60 <= 1.5)
+        string levelText = directLevelDb switch
         {
-            return "Время реверберации превышает оптимальный диапазон. В таких условиях речь может восприниматься менее чётко, особенно при увеличении расстояния между источником и приёмником.";
-        }
+            < 45 => "Оценочный уровень прямого сигнала в точке приёмника является низким; рекомендуется уменьшить расстояние между источником и приёмником либо улучшить акустические свойства помещения.",
+            < 55 => "Оценочный уровень прямого сигнала можно считать удовлетворительным, однако в неблагоприятных условиях он может оказаться недостаточным.",
+            _ => "Оценочный уровень прямого сигнала в точке приёмника является достаточным."
+        };
 
-        return "Время реверберации существенно превышает рекомендуемые значения. Это указывает на повышенную гулкость помещения и вероятное снижение разборчивости речи.";
-    }
-
-    private static string GetDistanceComment(double distance)
-    {
-        if (distance < 1.0)
-        {
-            return "Источник и приёмник расположены очень близко друг к другу, поэтому влияние расстояния на ослабление прямого сигнала минимально.";
-        }
-
-        if (distance <= 3.0)
-        {
-            return "Расстояние между источником и приёмником можно считать умеренным; при такой конфигурации прямой сигнал обычно сохраняет достаточный уровень.";
-        }
-
-        if (distance <= 5.0)
-        {
-            return "Расстояние между источником и приёмником заметно увеличено, поэтому вклад прямого сигнала в точке прослушивания снижается.";
-        }
-
-        return "Источник и приёмник расположены на значительном расстоянии, что может привести к заметному ослаблению прямого сигнала в точке приёмника.";
-    }
-
-    private static string GetDirectLevelComment(double directLevelDb)
-    {
-        if (directLevelDb < 45)
-        {
-            return "Оценочный уровень прямого сигнала в точке приёмника является низким; для повышения качества восприятия речи целесообразно уменьшить расстояние между источником и приёмником либо улучшить акустические свойства помещения.";
-        }
-
-        if (directLevelDb < 55)
-        {
-            return "Оценочный уровень прямого сигнала можно считать удовлетворительным, однако в неблагоприятных акустических условиях он может оказаться недостаточным для комфортного восприятия речи.";
-        }
-
-        return "Оценочный уровень прямого сигнала в точке приёмника является достаточным, что положительно сказывается на восприятии речевого сообщения.";
+        return $"{rtText} {distanceText} {levelText}";
     }
 }
