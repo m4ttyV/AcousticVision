@@ -108,14 +108,16 @@
             </StackPanel>
         </Border>
 
-        <Border Grid.Row="3" Classes="card">
-            <StackPanel Spacing="8">
-                <TextBlock Text="Список помещений" FontWeight="Bold"/>
+        <Border Grid.Row="3" Classes="card" ClipToBounds="True">
+    <Grid RowDefinitions="Auto,*"
+          RowSpacing="8">
+        <TextBlock Grid.Row="0"
+                   Text="Список помещений"
+                   FontWeight="Bold"/>
 
-                <DataGrid ItemsSource="{Binding Rooms}"
+        <DataGrid VerticalAlignment="Stretch" Grid.Row="1" ItemsSource="{Binding Rooms}"
                           SelectedItem="{Binding SelectedRoom}"
-                          AutoGenerateColumns="False"
-                          Height="350">
+                          AutoGenerateColumns="False" >
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="70"/>
                         <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"/>
@@ -125,8 +127,8 @@
                         <DataGridTextColumn Header="Высота" Binding="{Binding Height}" Width="100"/>
                     </DataGrid.Columns>
                 </DataGrid>
-            </StackPanel>
-        </Border>
+    </Grid>
+</Border>
 
         <TextBlock Grid.Row="4"
                    Text="{Binding StatusMessage}"

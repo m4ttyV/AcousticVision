@@ -51,20 +51,23 @@
             </StackPanel>
         </Border>
 
-        <Border Grid.Row="2" Classes="card">
-            <StackPanel Spacing="8">
-                <TextBlock Text="Список поверхностей" FontWeight="Bold"/>
+        <Border Grid.Row="2" Classes="card" ClipToBounds="True">
+    <Grid RowDefinitions="Auto,*"
+          RowSpacing="8">
+        <TextBlock Grid.Row="0"
+                   Text="Список поверхностей"
+                   FontWeight="Bold"/>
 
-                <DataGrid ItemsSource="{Binding Surfaces}" SelectedItem="{Binding SelectedSurface}" AutoGenerateColumns="False" Height="350">
+        <DataGrid VerticalAlignment="Stretch" Grid.Row="1" ItemsSource="{Binding Surfaces}" SelectedItem="{Binding SelectedSurface}" AutoGenerateColumns="False" >
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Помещение" Binding="{Binding Room.Name}" Width="180"/>
+                        <DataGridTextColumn Header="Помещение" Binding="{Binding Room.Name}" Width="300"/>
                         <DataGridTextColumn Header="Позиция" Binding="{Binding PositionDisplayName}" Width="160"/>
                         <DataGridTextColumn Header="Материал" Binding="{Binding Material.Name}" Width="180"/>
                         <DataGridTextColumn Header="Фактура" Binding="{Binding Texture.Name}" Width="180"/>
                     </DataGrid.Columns>
                 </DataGrid>
-            </StackPanel>
-        </Border>
+    </Grid>
+</Border>
 
         <TextBlock Grid.Row="3" Text="{Binding StatusMessage}" Foreground="{DynamicResource AppStatusTextBrush}" TextWrapping="Wrap"/>
     </Grid>

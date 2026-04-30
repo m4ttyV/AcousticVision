@@ -58,22 +58,24 @@
             </StackPanel>
         </Border>
 
-        <Border Grid.Row="3" Classes="card">
-            <StackPanel Spacing="8">
-                <TextBlock Text="Список фактур" FontWeight="Bold"/>
+        <Border Grid.Row="3" Classes="card" ClipToBounds="True">
+    <Grid RowDefinitions="Auto,*"
+          RowSpacing="8">
+        <TextBlock Grid.Row="0"
+                   Text="Список фактур"
+                   FontWeight="Bold"/>
 
-                <DataGrid ItemsSource="{Binding Textures}"
+        <DataGrid VerticalAlignment="Stretch" Grid.Row="1" ItemsSource="{Binding Textures}"
                           SelectedItem="{Binding SelectedTexture}"
-                          AutoGenerateColumns="False"
-                          Height="350">
+                          AutoGenerateColumns="False" >
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="80"/>
                         <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"/>
                         <DataGridTextColumn Header="Коэффициент" Binding="{Binding NoiseCancelation}" Width="160"/>
                     </DataGrid.Columns>
                 </DataGrid>
-            </StackPanel>
-        </Border>
+    </Grid>
+</Border>
 
         <TextBlock Grid.Row="4"
                    Text="{Binding StatusMessage}"

@@ -41,10 +41,14 @@
             </StackPanel>
         </Border>
 
-        <Border Grid.Row="3" Classes="card">
-            <StackPanel Spacing="8">
-                <TextBlock Text="Список источников" FontWeight="Bold"/>
-                <DataGrid ItemsSource="{Binding Sources}" SelectedItem="{Binding SelectedSource}" AutoGenerateColumns="False" Height="350">
+        <Border Grid.Row="3" Classes="card" ClipToBounds="True">
+    <Grid RowDefinitions="Auto,*"
+          RowSpacing="8">
+        <TextBlock Grid.Row="0"
+                   Text="Список источников"
+                   FontWeight="Bold"/>
+
+        <DataGrid VerticalAlignment="Stretch" Grid.Row="1" ItemsSource="{Binding Sources}" SelectedItem="{Binding SelectedSource}" AutoGenerateColumns="False" >
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="70"/>
                         <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="220"/>
@@ -53,8 +57,8 @@
                         <DataGridTextColumn Header="Properties" Binding="{Binding Properties}" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
-            </StackPanel>
-        </Border>
+    </Grid>
+</Border>
 
         <TextBlock Grid.Row="4" Text="{Binding StatusMessage}" Foreground="{DynamicResource AppStatusTextBrush}" TextWrapping="Wrap"/>
     </Grid>
