@@ -25,6 +25,19 @@ public class SoundSourceService
         await _dbContext.SaveChangesAsync();
     }
 
+    public async Task UpdateAsync(int id, string name, double volume, double? article, string? properties)
+    {
+        var item = await _dbContext.SoundSources.FirstOrDefaultAsync(x => x.Id == id);
+        if (item is null)
+            throw new InvalidOperationException("Источник не найден.");
+
+        item.Name = name.Trim();
+        item.Volume = volume;
+        item.Article = article;
+        item.Properties = string.IsNullOrWhiteSpace(properties) ? null : properties.Trim();
+        await _dbContext.SaveChangesAsync();
+    }
+
     public async Task DeleteAsync(int id)
     {
         var item = await _dbContext.SoundSources.FirstOrDefaultAsync(x => x.Id == id);

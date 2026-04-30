@@ -23,6 +23,17 @@ public class SoundReceiverService
         await _dbContext.SaveChangesAsync();
     }
 
+    public async Task UpdateAsync(int id, string name, string? properties)
+    {
+        var item = await _dbContext.SoundReceivers.FirstOrDefaultAsync(x => x.Id == id);
+        if (item is null)
+            throw new InvalidOperationException("Приёмник не найден.");
+
+        item.Name = name.Trim();
+        item.Properties = string.IsNullOrWhiteSpace(properties) ? null : properties.Trim();
+        await _dbContext.SaveChangesAsync();
+    }
+
     public async Task DeleteAsync(int id)
     {
         var item = await _dbContext.SoundReceivers.FirstOrDefaultAsync(x => x.Id == id);

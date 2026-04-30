@@ -1,10 +1,11 @@
 ﻿using AcousticVision.Models;
 using AcousticVision.Services;
-using Avalonia.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AcousticVision.ViewModels;
@@ -12,6 +13,7 @@ namespace AcousticVision.ViewModels;
 public partial class TexturesViewModel : ViewModelBase
 {
     private readonly TextureService _textureService;
+    private List<Texture> _allTextures = new();
 
     [ObservableProperty]
     private ObservableCollection<Texture> _textures = new();
@@ -24,6 +26,15 @@ public partial class TexturesViewModel : ViewModelBase
 
     [ObservableProperty]
     private string _newNoiseCancelation = string.Empty;
+
+    [ObservableProperty]
+    private string _searchText = string.Empty;
+
+    [ObservableProperty]
+    private string _editTextureName = string.Empty;
+
+    [ObservableProperty]
+    private string _editNoiseCancelation = string.Empty;
 
     [ObservableProperty]
     private string _statusMessage = string.Empty;
@@ -43,8 +54,8 @@ public partial class TexturesViewModel : ViewModelBase
     {
         try
         {
-            var items = await _textureService.GetAllAsync();
-            Textures = new ObservableCollection<Texture>(items);
+            _allTextures = await _textureService.GetAllAsync();
+            ApplyFilter();
             StatusMessage = $"Загружено фактур: {Textures.Count}";
         }
         catch (Exception ex)
@@ -65,17 +76,9 @@ public partial class TexturesViewModel : ViewModelBase
             return;
         }
 
-        var normalized = (NewNoiseCancelation ?? string.Empty).Replace(',', '.');
-
-        if (!double.TryParse(normalized, System.Globalization.CultureInfo.InvariantCulture, out var value))
+        if (!TryParseFactor(NewNoiseCancelation, out var value))
         {
-            StatusMessage = "Введите корректное числовое значение коэффициента.";
-            return;
-        }
-
-        if (value < 0 || value > 1)
-        {
-            StatusMessage = "Коэффициент звукопоглощения должен быть в диапазоне от 0 до 1.";
+            StatusMessage = "Введите корректное числовое значение коэффициента в диапазоне от 0 до 1.";
             return;
         }
 
@@ -94,6 +97,51 @@ public partial class TexturesViewModel : ViewModelBase
     }
 
     [RelayCommand]
+    private async Task UpdateSelectedAsync()
+    {
+        if (SelectedTexture is null)
+        {
+            StatusMessage = "Выберите фактуру для изменения.";
+            return;
+        }
+
+        var name = EditTextureName?.Trim() ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            StatusMessage = "Введите название фактуры для изменения.";
+            return;
+        }
+
+        if (!TryParseFactor(EditNoiseCancelation, out var value))
+        {
+            StatusMessage = "Введите корректное числовое значение коэффициента в диапазоне от 0 до 1.";
+            return;
+        }
+
+        try
+        {
+            var selectedId = SelectedTexture.Id;
+            await _textureService.UpdateAsync(selectedId, name, value);
+            await LoadAsync();
+            SelectedTexture = Textures.FirstOrDefault(x => x.Id == selectedId);
+            StatusMessage = "Фактура успешно изменена.";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Ошибка при изменении: {ex.Message}";
+        }
+    }
+
+    [RelayCommand]
+    private void ClearSelection()
+    {
+        SelectedTexture = null;
+        EditTextureName = string.Empty;
+        EditNoiseCancelation = string.Empty;
+        StatusMessage = "Выбор фактуры сброшен.";
+    }
+
+    [RelayCommand]
     private async Task DeleteSelectedAsync()
     {
         if (SelectedTexture is null)
@@ -105,6 +153,9 @@ public partial class TexturesViewModel : ViewModelBase
         try
         {
             await _textureService.DeleteAsync(SelectedTexture.Id);
+            SelectedTexture = null;
+            EditTextureName = string.Empty;
+            EditNoiseCancelation = string.Empty;
             await LoadAsync();
             StatusMessage = "Фактура удалена.";
         }
@@ -112,5 +163,53 @@ public partial class TexturesViewModel : ViewModelBase
         {
             StatusMessage = $"Ошибка при удалении: {ex.Message}";
         }
+    }
+
+    partial void OnSelectedTextureChanged(Texture? value)
+    {
+        if (value is null)
+        {
+            EditTextureName = string.Empty;
+            EditNoiseCancelation = string.Empty;
+            return;
+        }
+
+        EditTextureName = value.Name;
+        EditNoiseCancelation = value.NoiseCancelation.ToString(System.Globalization.CultureInfo.InvariantCulture);
+    }
+
+    partial void OnSearchTextChanged(string value) => ApplyFilter();
+
+    private void ApplyFilter()
+    {
+        IEnumerable<Texture> filtered = _allTextures;
+        var query = SearchText?.Trim();
+
+        if (!string.IsNullOrWhiteSpace(query))
+        {
+            filtered = filtered.Where(x =>
+                x.Name.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                x.NoiseCancelation.ToString(System.Globalization.CultureInfo.InvariantCulture)
+                    .Contains(query, StringComparison.OrdinalIgnoreCase));
+        }
+
+        Textures = new ObservableCollection<Texture>(filtered);
+
+        if (SelectedTexture is not null)
+        {
+            SelectedTexture = Textures.FirstOrDefault(x => x.Id == SelectedTexture.Id);
+        }
+    }
+
+    private static bool TryParseFactor(string? input, out double value)
+    {
+        var normalized = (input ?? string.Empty).Replace(',', '.');
+        if (double.TryParse(normalized, System.Globalization.CultureInfo.InvariantCulture, out value))
+        {
+            return value >= 0 && value <= 1;
+        }
+
+        value = 0;
+        return false;
     }
 }

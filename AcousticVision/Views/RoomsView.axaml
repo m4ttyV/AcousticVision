@@ -4,7 +4,7 @@
              x:Class="AcousticVision.Views.RoomsView"
              x:DataType="vm:RoomsViewModel">
 
-    <Grid RowDefinitions="Auto,Auto,*,Auto"
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto"
           ColumnDefinitions="*"
           RowSpacing="12">
 
@@ -63,6 +63,53 @@
 
         <Border Grid.Row="2" Classes="card">
             <StackPanel Spacing="8">
+                <TextBlock Text="Изменение выбранного помещения" FontWeight="Bold"/>
+
+                <TextBox Watermark="Поиск по названию, типу или размерам"
+                         Text="{Binding SearchText}"/>
+
+                <TextBox Watermark="Название помещения"
+                         Text="{Binding EditRoomName}"/>
+
+                <TextBlock Text="Тип помещения"/>
+
+                <ComboBox ItemsSource="{Binding RoomTypeOptions}"
+                          SelectedItem="{Binding EditRoomTypeOption}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding DisplayName}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                    <TextBox Grid.Column="0"
+                             Watermark="Длина"
+                             Text="{Binding EditLength}"/>
+
+                    <TextBox Grid.Column="1"
+                             Watermark="Ширина"
+                             Text="{Binding EditWidth}"/>
+
+                    <TextBox Grid.Column="2"
+                             Watermark="Высота"
+                             Text="{Binding EditHeight}"/>
+                </Grid>
+
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button Classes="action"
+                            Content="Сохранить изменения"
+                            Command="{Binding UpdateSelectedCommand}"/>
+
+                    <Button Classes="action"
+                            Content="Сбросить выбор"
+                            Command="{Binding ClearSelectionCommand}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="3" Classes="card">
+            <StackPanel Spacing="8">
                 <TextBlock Text="Список помещений" FontWeight="Bold"/>
 
                 <DataGrid ItemsSource="{Binding Rooms}"
@@ -81,7 +128,7 @@
             </StackPanel>
         </Border>
 
-        <TextBlock Grid.Row="3"
+        <TextBlock Grid.Row="4"
                    Text="{Binding StatusMessage}"
                    Foreground="{DynamicResource AppStatusTextBrush}"
                    TextWrapping="Wrap"/>

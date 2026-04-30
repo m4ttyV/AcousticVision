@@ -23,6 +23,17 @@ public class TextureService
         await _dbContext.SaveChangesAsync();
     }
 
+    public async Task UpdateAsync(int id, string name, double noiseCancelation)
+    {
+        var item = await _dbContext.Textures.FirstOrDefaultAsync(x => x.Id == id);
+        if (item is null)
+            throw new InvalidOperationException("Фактура не найдена.");
+
+        item.Name = name.Trim();
+        item.NoiseCancelation = noiseCancelation;
+        await _dbContext.SaveChangesAsync();
+    }
+
     public async Task DeleteAsync(int id)
     {
         var item = await _dbContext.Textures.FirstOrDefaultAsync(x => x.Id == id);

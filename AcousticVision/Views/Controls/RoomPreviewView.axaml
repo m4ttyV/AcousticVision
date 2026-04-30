@@ -3,22 +3,27 @@
              xmlns:vm="using:AcousticVision.ViewModels"
              x:Class="AcousticVision.Views.Controls.RoomPreviewView"
              x:DataType="vm:RoomPreviewViewModel">
+    <StackPanel ScrollViewer.VerticalScrollBarVisibility="Auto">
+        <Grid RowDefinitions="Auto,*,*"
+              RowSpacing="10">
+            <StackPanel Spacing="4">
+                <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="14"/>
+                <TextBlock Text="{Binding Summary}"
+                           Foreground="{DynamicResource AppSecondaryTextBrush}"
+                           TextWrapping="Wrap"/>
+            </StackPanel>
 
-    <Border Classes="card">
-        <StackPanel Spacing="10">
-            <TextBlock Text="{Binding Title}" FontWeight="Bold"/>
-            <TextBlock Text="{Binding Summary}"
-                       Foreground="{DynamicResource AppSecondaryTextBrush}"
-                       TextWrapping="Wrap"/>
-
-            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+            <Grid Grid.Row="1"
+                  ColumnDefinitions="Auto,340,84"
+                  ColumnSpacing="14">
                 <Border Width="{Binding CanvasWidth}"
                         Height="{Binding CanvasHeight}"
+                        Padding="8"
                         Background="{DynamicResource AppWindowBackgroundBrush}"
                         BorderBrush="{DynamicResource AppCardBorderBrush}"
                         BorderThickness="1"
-                        CornerRadius="8"
-                        Padding="8">
+                        CornerRadius="10"
+                        VerticalAlignment="Top">
                     <Canvas Width="{Binding CanvasWidth}" Height="{Binding CanvasHeight}">
                         <Rectangle Canvas.Left="{Binding RoomX}"
                                    Canvas.Top="{Binding RoomY}"
@@ -79,64 +84,149 @@
                                        VerticalAlignment="Center"
                                        Foreground="White"/>
                         </Border>
-
-                        <TextBlock Canvas.Left="{Binding RoomX}"
-                                   Canvas.Top="2"
-                                   Text="North"
-                                   FontSize="11"
-                                   FontWeight="SemiBold"
-                                   Foreground="{DynamicResource AppSecondaryTextBrush}"/>
-
-                        <TextBlock Canvas.Left="{Binding RoomX}"
-                                   Canvas.Top="{Binding SouthLabelY}"
-                                   Text="South"
-                                   FontSize="11"
-                                   FontWeight="SemiBold"
-                                   Foreground="{DynamicResource AppSecondaryTextBrush}"/>
-
-                        <TextBlock Canvas.Left="2"
-                                   Canvas.Top="{Binding RoomY}"
-                                   Text="West"
-                                   FontSize="11"
-                                   FontWeight="SemiBold"
-                                   Foreground="{DynamicResource AppSecondaryTextBrush}"/>
-
-                        <TextBlock Canvas.Left="{Binding EastLabelX}"
-                                   Canvas.Top="{Binding RoomY}"
-                                   Text="East"
-                                   FontSize="11"
-                                   FontWeight="SemiBold"
-                                   Foreground="{DynamicResource AppSecondaryTextBrush}"/>
                     </Canvas>
                 </Border>
 
-                <StackPanel Grid.Column="1" Spacing="8" Width="320">
-                    <TextBlock Text="Легенда поверхностей" FontWeight="SemiBold"/>
-                    <TextBlock Text="{Binding NorthLabel}" TextWrapping="Wrap"/>
-                    <TextBlock Text="{Binding SouthLabel}" TextWrapping="Wrap"/>
-                    <TextBlock Text="{Binding EastLabel}" TextWrapping="Wrap"/>
-                    <TextBlock Text="{Binding WestLabel}" TextWrapping="Wrap"/>
+                <Border 
+                        Width="80"
+                        Height="80"
+                        Margin="{Binding CompassMargin}"
+                        Background="{DynamicResource AppWindowBackgroundBrush}"
+                        BorderBrush="{DynamicResource AppCardBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="10"
+                        Padding="6"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Left">
+                    <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="Auto,*,Auto">
+                        <TextBlock Grid.Row="0" Grid.Column="1"
+                                   Text="С"
+                                   HorizontalAlignment="Center"
+                                   FontSize="12"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource AppSecondaryTextBrush}"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1"
+                                   Text="Ю"
+                                   HorizontalAlignment="Center"
+                                   FontSize="12"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource AppSecondaryTextBrush}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0"
+                                   Text="З"
+                                   VerticalAlignment="Center"
+                                   FontSize="12"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource AppSecondaryTextBrush}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2"
+                                   Text="В"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Right"
+                                   FontSize="12"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource AppSecondaryTextBrush}"/>
 
-                    <Separator Margin="0,2"/>
+                        <Grid Grid.Row="1"
+                              Grid.Column="1"
+                              Width="22"
+                              Height="22"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center">
+                            <Rectangle Width="2"
+                                       Height="20"
+                                       Fill="{DynamicResource AppSecondaryTextBrush}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                            <Rectangle Width="20"
+                                       Height="2"
+                                       Fill="{DynamicResource AppSecondaryTextBrush}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Text="▲"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Top"
+                                       FontSize="10"
+                                       Foreground="{DynamicResource AppAccentBrush}"/>
+                        </Grid>
+                    </Grid>
+                </Border>
 
-                    <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
-                        <Border Classes="card" Background="{Binding FloorBrush}" BorderThickness="1">
-                            <TextBlock Text="{Binding FloorLabel}" TextWrapping="Wrap"/>
+                <StackPanel Grid.Column="1"
+                            Margin="40,-50,0,0"
+                            Spacing="10"
+                            Width="340"
+                            VerticalAlignment="Top"
+                            HorizontalAlignment="Right">
+                    <TextBlock Text="Ориентация и поверхности"
+                               FontWeight="SemiBold"/>
+
+                    <Border Classes="card" Padding="12">
+                        <Grid RowDefinitions="Auto,Auto,Auto,Auto"
+                              ColumnDefinitions="18,*"
+                              ColumnSpacing="8"
+                              RowSpacing="7">
+                            <Border Grid.Row="0" Width="14" Height="14" CornerRadius="4" Background="{Binding NorthBrush}" BorderBrush="{DynamicResource AppCardBorderBrush}" BorderThickness="1"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding NorthLabel}" TextWrapping="Wrap"/>
+
+                            <Border Grid.Row="1" Width="14" Height="14" CornerRadius="4" Background="{Binding SouthBrush}" BorderBrush="{DynamicResource AppCardBorderBrush}" BorderThickness="1"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SouthLabel}" TextWrapping="Wrap"/>
+
+                            <Border Grid.Row="2" Width="14" Height="14" CornerRadius="4" Background="{Binding EastBrush}" BorderBrush="{DynamicResource AppCardBorderBrush}" BorderThickness="1"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding EastLabel}" TextWrapping="Wrap"/>
+
+                            <Border Grid.Row="3" Width="14" Height="14" CornerRadius="4" Background="{Binding WestBrush}" BorderBrush="{DynamicResource AppCardBorderBrush}" BorderThickness="1"/>
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding WestLabel}" TextWrapping="Wrap"/>
+                        </Grid>
+                    </Border>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Border Classes="card"
+                                Padding="10"
+                                Background="{Binding FloorBrush}"
+                                BorderThickness="1"
+                                MinHeight="66">
+                            <StackPanel Spacing="3">
+                                <TextBlock Text="Пол" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding FloorLabel}" TextWrapping="Wrap"/>
+                            </StackPanel>
                         </Border>
-                        <Border Grid.Column="1" Classes="card" Background="{Binding CeilingBrush}" BorderThickness="1">
-                            <TextBlock Text="{Binding CeilingLabel}" TextWrapping="Wrap"/>
+
+                        <Border Grid.Column="1"
+                                Classes="card"
+                                Padding="10"
+                                Background="{Binding CeilingBrush}"
+                                BorderThickness="1"
+                                MinHeight="66">
+                            <StackPanel Spacing="3">
+                                <TextBlock Text="Потолок" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding CeilingLabel}" TextWrapping="Wrap"/>
+                            </StackPanel>
                         </Border>
                     </Grid>
 
-                    <Separator Margin="0,2"/>
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Border Classes="card" Padding="10" MinHeight="84">
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Источник" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding SourceInfo}" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
 
-                    <TextBlock Text="{Binding SourceInfo}" TextWrapping="Wrap"/>
-                    <TextBlock Text="{Binding ReceiverInfo}" TextWrapping="Wrap"/>
+                        <Border Grid.Column="1" Classes="card" Padding="10" MinHeight="84">
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Приёмник" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding ReceiverInfo}" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
                     <TextBlock Text="{Binding LegendText}"
                                Foreground="{DynamicResource AppSecondaryTextBrush}"
+                               FontSize="12"
                                TextWrapping="Wrap"/>
                 </StackPanel>
             </Grid>
-        </StackPanel>
-    </Border>
+        </Grid>
+    </StackPanel>
+ 
+    
 </UserControl>

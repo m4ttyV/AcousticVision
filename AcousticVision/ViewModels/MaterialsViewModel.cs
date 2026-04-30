@@ -3,7 +3,9 @@ using AcousticVision.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AcousticVision.ViewModels;
@@ -11,6 +13,7 @@ namespace AcousticVision.ViewModels;
 public partial class MaterialsViewModel : ViewModelBase
 {
     private readonly MaterialService _materialService;
+    private List<Material> _allMaterials = new();
 
     [ObservableProperty]
     private ObservableCollection<Material> _materials = new();
@@ -25,6 +28,15 @@ public partial class MaterialsViewModel : ViewModelBase
     private string _newNoiseCancelation = string.Empty;
 
     [ObservableProperty]
+    private string _searchText = string.Empty;
+
+    [ObservableProperty]
+    private string _editMaterialName = string.Empty;
+
+    [ObservableProperty]
+    private string _editNoiseCancelation = string.Empty;
+
+    [ObservableProperty]
     private string _statusMessage = string.Empty;
 
     public MaterialsViewModel(MaterialService materialService)
@@ -35,14 +47,16 @@ public partial class MaterialsViewModel : ViewModelBase
     [RelayCommand]
     private async Task LoadAsync()
     {
-        var items = await _materialService.GetAllAsync();
-        Materials = new ObservableCollection<Material>(items);
+        _allMaterials = await _materialService.GetAllAsync();
+        ApplyFilter();
         StatusMessage = $"Загружено материалов: {Materials.Count}";
     }
+
     public async Task InitializeAsync()
     {
         await LoadAsync();
     }
+
     [RelayCommand]
     private async Task AddMaterialAsync()
     {
@@ -55,17 +69,9 @@ public partial class MaterialsViewModel : ViewModelBase
             return;
         }
 
-        var normalized = (NewNoiseCancelation ?? string.Empty).Replace(',', '.');
-
-        if (!double.TryParse(normalized, System.Globalization.CultureInfo.InvariantCulture, out var value))
+        if (!TryParseFactor(NewNoiseCancelation, out var value))
         {
-            StatusMessage = "Введите корректное числовое значение коэффициента.";
-            return;
-        }
-
-        if (value < 0 || value > 1)
-        {
-            StatusMessage = "Коэффициент звукопоглощения должен быть в диапазоне от 0 до 1.";
+            StatusMessage = "Введите корректное числовое значение коэффициента в диапазоне от 0 до 1.";
             return;
         }
 
@@ -84,6 +90,51 @@ public partial class MaterialsViewModel : ViewModelBase
     }
 
     [RelayCommand]
+    private async Task UpdateSelectedAsync()
+    {
+        if (SelectedMaterial is null)
+        {
+            StatusMessage = "Выберите материал для изменения.";
+            return;
+        }
+
+        var name = EditMaterialName?.Trim() ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            StatusMessage = "Введите название материала для изменения.";
+            return;
+        }
+
+        if (!TryParseFactor(EditNoiseCancelation, out var value))
+        {
+            StatusMessage = "Введите корректное числовое значение коэффициента в диапазоне от 0 до 1.";
+            return;
+        }
+
+        try
+        {
+            var selectedId = SelectedMaterial.Id;
+            await _materialService.UpdateAsync(selectedId, name, value);
+            await LoadAsync();
+            SelectedMaterial = Materials.FirstOrDefault(x => x.Id == selectedId);
+            StatusMessage = "Материал успешно изменён.";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Ошибка при изменении: {ex.Message}";
+        }
+    }
+
+    [RelayCommand]
+    private void ClearSelection()
+    {
+        SelectedMaterial = null;
+        EditMaterialName = string.Empty;
+        EditNoiseCancelation = string.Empty;
+        StatusMessage = "Выбор материала сброшен.";
+    }
+
+    [RelayCommand]
     private async Task DeleteSelectedAsync()
     {
         if (SelectedMaterial is null)
@@ -95,6 +146,9 @@ public partial class MaterialsViewModel : ViewModelBase
         try
         {
             await _materialService.DeleteAsync(SelectedMaterial.Id);
+            SelectedMaterial = null;
+            EditMaterialName = string.Empty;
+            EditNoiseCancelation = string.Empty;
             await LoadAsync();
             StatusMessage = "Материал удалён.";
         }
@@ -102,5 +156,53 @@ public partial class MaterialsViewModel : ViewModelBase
         {
             StatusMessage = $"Ошибка при удалении: {ex.Message}";
         }
+    }
+
+    partial void OnSelectedMaterialChanged(Material? value)
+    {
+        if (value is null)
+        {
+            EditMaterialName = string.Empty;
+            EditNoiseCancelation = string.Empty;
+            return;
+        }
+
+        EditMaterialName = value.Name;
+        EditNoiseCancelation = value.NoiseCancelation.ToString(System.Globalization.CultureInfo.InvariantCulture);
+    }
+
+    partial void OnSearchTextChanged(string value) => ApplyFilter();
+
+    private void ApplyFilter()
+    {
+        IEnumerable<Material> filtered = _allMaterials;
+        var query = SearchText?.Trim();
+
+        if (!string.IsNullOrWhiteSpace(query))
+        {
+            filtered = filtered.Where(x =>
+                x.Name.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                x.NoiseCancelation.ToString(System.Globalization.CultureInfo.InvariantCulture)
+                    .Contains(query, StringComparison.OrdinalIgnoreCase));
+        }
+
+        Materials = new ObservableCollection<Material>(filtered);
+
+        if (SelectedMaterial is not null)
+        {
+            SelectedMaterial = Materials.FirstOrDefault(x => x.Id == SelectedMaterial.Id);
+        }
+    }
+
+    private static bool TryParseFactor(string? input, out double value)
+    {
+        var normalized = (input ?? string.Empty).Replace(',', '.');
+        if (double.TryParse(normalized, System.Globalization.CultureInfo.InvariantCulture, out value))
+        {
+            return value >= 0 && value <= 1;
+        }
+
+        value = 0;
+        return false;
     }
 }

@@ -42,6 +42,27 @@ public class RoomModelService
         return room;
     }
 
+    public async Task UpdateAsync(
+        int id,
+        string name,
+        RoomType roomType,
+        double length,
+        double width,
+        double height)
+    {
+        var room = await _dbContext.RoomModels.FirstOrDefaultAsync(x => x.Id == id);
+        if (room is null)
+            throw new InvalidOperationException("Помещение не найдено.");
+
+        room.Name = name.Trim();
+        room.RoomType = roomType;
+        room.Length = length;
+        room.Width = width;
+        room.Height = height;
+
+        await _dbContext.SaveChangesAsync();
+    }
+
     public async Task DeleteAsync(int id)
     {
         var room = await _dbContext.RoomModels.FirstOrDefaultAsync(x => x.Id == id);

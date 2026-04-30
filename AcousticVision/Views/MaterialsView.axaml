@@ -4,7 +4,7 @@
              x:Class="AcousticVision.Views.MaterialsView"
              x:DataType="vm:MaterialsViewModel">
 
-    <Grid RowDefinitions="Auto,Auto,*,Auto" ColumnDefinitions="*"
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" ColumnDefinitions="*"
           RowSpacing="12">
 
         <TextBlock Grid.Row="0"
@@ -37,6 +37,29 @@
 
         <Border Grid.Row="2" Classes="card">
             <StackPanel Spacing="8">
+                <TextBlock Text="Изменение выбранного материала" FontWeight="Bold"/>
+
+                <TextBox Watermark="Поиск по названию или коэффициенту"
+                         Text="{Binding SearchText}"/>
+
+                <TextBox Watermark="Название материала"
+                         Text="{Binding EditMaterialName}"/>
+
+                <TextBox Watermark="Коэффициент звукопоглощения (0..1)"
+                         Text="{Binding EditNoiseCancelation}"/>
+
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button Classes="action" Content="Сохранить изменения"
+                            Command="{Binding UpdateSelectedCommand}"/>
+
+                    <Button Classes="action" Content="Сбросить выбор"
+                            Command="{Binding ClearSelectionCommand}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="3" Classes="card">
+            <StackPanel Spacing="8">
                 <TextBlock Text="Список материалов" FontWeight="Bold"/>
 
                 <DataGrid ItemsSource="{Binding Materials}"
@@ -52,7 +75,7 @@
             </StackPanel>
         </Border>
 
-        <TextBlock Grid.Row="3"
+        <TextBlock Grid.Row="4"
                    Text="{Binding StatusMessage}"
                    Foreground="{DynamicResource AppStatusTextBrush}"
                    TextWrapping="Wrap"/>

@@ -9,7 +9,7 @@ public sealed class RoomPreviewViewModel
     public string Summary { get; init; } = string.Empty;
 
     public double CanvasWidth { get; init; } = 360;
-    public double CanvasHeight { get; init; } = 240;
+    public double CanvasHeight { get; init; } = 350;
 
     public double RoomX { get; init; }
     public double RoomY { get; init; }
@@ -19,8 +19,22 @@ public sealed class RoomPreviewViewModel
 
     public double SouthWallY => RoomY + RoomHeight - WallThickness;
     public double EastWallX => RoomX + RoomWidth - WallThickness;
-    public double SouthLabelY => RoomY + RoomHeight + 6;
-    public double EastLabelX => RoomX + RoomWidth + 6;
+
+    public double WallCaptionHorizontalWidth { get; init; } = 130;
+    public double WallCaptionVerticalWidth { get; init; } = 96;
+    public double WallCaptionVerticalHeight { get; init; } = 20;
+
+    public double NorthCaptionX => RoomX + (RoomWidth - WallCaptionHorizontalWidth) / 2;
+    public double NorthCaptionY => Math.Max(0, RoomY - 24);
+
+    public double SouthCaptionX => RoomX + (RoomWidth - WallCaptionHorizontalWidth) / 2;
+    public double SouthCaptionY => RoomY + RoomHeight + 8;
+
+    public double WestCaptionX => Math.Max(2, RoomX - 58);
+    public double WestCaptionY => RoomY + (RoomHeight / 2) - (WallCaptionVerticalHeight / 2);
+
+    public double EastCaptionX => RoomX + RoomWidth - 38;
+    public double EastCaptionY => RoomY + (RoomHeight / 2) - (WallCaptionVerticalHeight / 2);
 
     public IBrush NorthBrush { get; init; } = Brushes.LightGray;
     public IBrush SouthBrush { get; init; } = Brushes.LightGray;
@@ -41,6 +55,8 @@ public sealed class RoomPreviewViewModel
     public double ReceiverX { get; init; }
     public double ReceiverY { get; init; }
     public double MarkerSize { get; init; } = 16;
+    
+    public Avalonia.Thickness CompassMargin => new Avalonia.Thickness(0, RoomY + RoomHeight + 35, 0, 0);
 
     public string SourceInfo { get; init; } = string.Empty;
     public string ReceiverInfo { get; init; } = string.Empty;

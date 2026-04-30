@@ -6,7 +6,7 @@
              x:Class="AcousticVision.Views.AnalysisView"
              x:DataType="vm:AnalysisViewModel">
 
-    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto"
+    <Grid RowDefinitions="Auto,Auto,*,Auto"
           ColumnDefinitions="*"
           RowSpacing="12">
 
@@ -16,12 +16,24 @@
                    FontWeight="Bold"/>
 
         <Border Grid.Row="1" Classes="card">
-            <StackPanel Spacing="8">
-                <TextBlock Text="Запуск анализа" FontWeight="Bold"/>
-               <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8">
+            <Grid RowDefinitions="Auto,Auto"
+                  ColumnDefinitions="Auto,*,Auto,Auto"
+                  ColumnSpacing="10"
+                  RowSpacing="10">
+                <TextBlock Grid.Row="0"
+                           Grid.ColumnSpan="4"
+                           Text="Запуск анализа"
+                           FontWeight="Bold"/>
 
-                <TextBlock Text="Тестовая модель"/>
-                <ComboBox ItemsSource="{Binding TestModels}"
+                <TextBlock Grid.Row="1"
+                           Grid.Column="0"
+                           VerticalAlignment="Center"
+                           Text="Тестовая модель"/>
+
+                <ComboBox Grid.Row="1"
+                          Grid.Column="1"
+                          HorizontalAlignment="Stretch"
+                          ItemsSource="{Binding TestModels}"
                           SelectedItem="{Binding SelectedTestModel}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate x:DataType="models:TestModel">
@@ -29,86 +41,90 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-                                   <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
-                    <Button Classes="action"
-                            Content="Рассчитать"
-                            Command="{Binding RunAnalysisCommand}"/>
 
-                    <Button Classes="action"
-                            Content="Обновить список"
-                            Command="{Binding LoadCommand}"/>
-                </StackPanel>
-                </StackPanel>
+                <Button Grid.Row="1"
+                        Grid.Column="2"
+                        Classes="action"
+                        Width="170"
+                        Content="Рассчитать"
+                        Command="{Binding RunAnalysisCommand}"/>
 
-
-            </StackPanel>
+                <Button Grid.Row="1"
+                        Grid.Column="3"
+                        Classes="action"
+                        Width="170"
+                        Content="Обновить список"
+                        Command="{Binding LoadCommand}"/>
+            </Grid>
         </Border>
 
         <Border Grid.Row="2" Classes="card">
-            <StackPanel Spacing="8">
+            <StackPanel Spacing="10">
                 <TextBlock Text="Визуализация конфигурации" FontWeight="Bold"/>
                 <controls:RoomPreviewView DataContext="{Binding Preview}"/>
             </StackPanel>
         </Border>
 
-        <Border Grid.Row="3" Classes="card">
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <StackPanel Spacing="8">
-                <TextBlock Text="Результат анализа" FontWeight="Bold"/>
+        <Grid Grid.Row="3" RowDefinitions="150,Auto" RowSpacing="10">
+            <Border Grid.Row="0" Classes="card">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Результат анализа" FontWeight="Bold"/>
 
-                <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
-                      ColumnDefinitions="240,*"
-                      RowSpacing="6"
-                      ColumnSpacing="12">
+                        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                              ColumnDefinitions="240,*"
+                              RowSpacing="6"
+                              ColumnSpacing="12">
 
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Помещение:" FontWeight="Bold"/>
-                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ResultRoom}"/>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Помещение:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ResultRoom}"/>
 
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Источник:" FontWeight="Bold"/>
-                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ResultSource}"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Источник:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ResultSource}"/>
 
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Координаты источника:" FontWeight="Bold"/>
-                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding ResultSourceLocation}"/>
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Координаты источника:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding ResultSourceLocation}"/>
 
-                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Приёмник:" FontWeight="Bold"/>
-                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding ResultReceiver}"/>
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Приёмник:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding ResultReceiver}"/>
 
-                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Координаты приёмника:" FontWeight="Bold"/>
-                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding ResultReceiverLocation}"/>
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Координаты приёмника:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding ResultReceiverLocation}"/>
 
-                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Расстояние источник–приёмник:" FontWeight="Bold"/>
-                    <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding ResultDistance}"/>
+                            <TextBlock Grid.Row="5" Grid.Column="0" Text="Расстояние источник–приёмник:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding ResultDistance}"/>
 
-                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Использованная формула:" FontWeight="Bold"/>
-                    <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding ResultFormula}"/>
+                            <TextBlock Grid.Row="6" Grid.Column="0" Text="Использованная формула:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding ResultFormula}"/>
 
-                    <TextBlock Grid.Row="7" Grid.Column="0" Text="Ослабление прямого сигнала:" FontWeight="Bold"/>
-                    <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding ResultAttenuation}"/>
+                            <TextBlock Grid.Row="7" Grid.Column="0" Text="Ослабление прямого сигнала:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding ResultAttenuation}"/>
 
-                    <TextBlock Grid.Row="8" Grid.Column="0" Text="Условный уровень в точке:" FontWeight="Bold"/>
-                    <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding ResultDirectLevel}"/>
+                            <TextBlock Grid.Row="8" Grid.Column="0" Text="Условный уровень в точке:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding ResultDirectLevel}"/>
 
-                    <TextBlock Grid.Row="9" Grid.Column="0" Text="Объём помещения:" FontWeight="Bold"/>
-                    <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding ResultVolume}"/>
+                            <TextBlock Grid.Row="9" Grid.Column="0" Text="Объём помещения:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding ResultVolume}"/>
 
-                    <TextBlock Grid.Row="10" Grid.Column="0" Text="Эквивалентное поглощение:" FontWeight="Bold"/>
-                    <TextBlock Grid.Row="10" Grid.Column="1" Text="{Binding ResultAbsorption}"/>
+                            <TextBlock Grid.Row="10" Grid.Column="0" Text="Эквивалентное поглощение:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="10" Grid.Column="1" Text="{Binding ResultAbsorption}"/>
 
-                    <TextBlock Grid.Row="11" Grid.Column="0" Text="RT60:" FontWeight="Bold"/>
-                    <TextBlock Grid.Row="11" Grid.Column="1" Text="{Binding ResultRt60}" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="11" Grid.Column="0" Text="RT60:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="11" Grid.Column="1" Text="{Binding ResultRt60}" FontWeight="SemiBold"/>
 
-                    <TextBlock Grid.Row="12" Grid.Column="0" Text="Рекомендация:" FontWeight="Bold"/>
-                    <StackPanel Grid.Row="12" Grid.Column="1" Spacing="4">
-                        <TextBlock Text="{Binding ResultRecommendation}" TextWrapping="Wrap"/>
+                            <TextBlock Grid.Row="12" Grid.Column="0" Text="Рекомендация:" FontWeight="Bold"/>
+                            <StackPanel Grid.Row="12" Grid.Column="1" Spacing="4">
+                                <TextBlock Text="{Binding ResultRecommendation}" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Grid>
                     </StackPanel>
-                </Grid>
-            </StackPanel>
-        </ScrollViewer>
-        </Border>
+                </ScrollViewer>
+            </Border>
 
-        <TextBlock Grid.Row="4"
-                   Text="{Binding StatusMessage}"
-                   Foreground="{DynamicResource AppStatusTextBrush}"
-                   TextWrapping="Wrap"/>
+            <TextBlock Grid.Row="1"
+                       Text="{Binding StatusMessage}"
+                       Foreground="{DynamicResource AppStatusTextBrush}"
+                       TextWrapping="Wrap"/>
+        </Grid>
     </Grid>
 </UserControl>

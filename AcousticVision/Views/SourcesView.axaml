@@ -4,7 +4,7 @@
              x:Class="AcousticVision.Views.SourcesView"
              x:DataType="vm:SourcesViewModel">
 
-    <Grid RowDefinitions="Auto,Auto,*,Auto" ColumnDefinitions="*" RowSpacing="12">
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" ColumnDefinitions="*" RowSpacing="12">
         <TextBlock Grid.Row="0" Text="Раздел: Источники звука" FontSize="20" FontWeight="Bold"/>
 
         <Border Grid.Row="1" Classes="card">
@@ -26,6 +26,23 @@
 
         <Border Grid.Row="2" Classes="card">
             <StackPanel Spacing="8">
+                <TextBlock Text="Изменение выбранного источника" FontWeight="Bold"/>
+                <TextBox Watermark="Поиск по названию, громкости, Article или свойствам" Text="{Binding SearchText}"/>
+                <TextBox Watermark="Название источника" Text="{Binding EditSourceName}"/>
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                    <TextBox Grid.Column="0" Watermark="Громкость" Text="{Binding EditVolume}"/>
+                    <TextBox Grid.Column="1" Watermark="Article (0..1, необязательно)" Text="{Binding EditArticle}"/>
+                </Grid>
+                <TextBox Watermark="Дополнительные свойства" Text="{Binding EditProperties}"/>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button Classes="action" Content="Сохранить изменения" Command="{Binding UpdateSelectedCommand}"/>
+                    <Button Classes="action" Content="Сбросить выбор" Command="{Binding ClearSelectionCommand}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="3" Classes="card">
+            <StackPanel Spacing="8">
                 <TextBlock Text="Список источников" FontWeight="Bold"/>
                 <DataGrid ItemsSource="{Binding Sources}" SelectedItem="{Binding SelectedSource}" AutoGenerateColumns="False" Height="350">
                     <DataGrid.Columns>
@@ -39,6 +56,6 @@
             </StackPanel>
         </Border>
 
-        <TextBlock Grid.Row="3" Text="{Binding StatusMessage}" Foreground="{DynamicResource AppStatusTextBrush}" TextWrapping="Wrap"/>
+        <TextBlock Grid.Row="4" Text="{Binding StatusMessage}" Foreground="{DynamicResource AppStatusTextBrush}" TextWrapping="Wrap"/>
     </Grid>
 </UserControl>

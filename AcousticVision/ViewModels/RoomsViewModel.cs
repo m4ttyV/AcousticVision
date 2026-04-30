@@ -3,8 +3,10 @@ using AcousticVision.Models;
 using AcousticVision.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using static AcousticVision.ViewModels.RoomsViewModel;
+using System.Linq;
 
 namespace AcousticVision.ViewModels;
 
@@ -17,6 +19,7 @@ public partial class RoomsViewModel : ViewModelBase
     }
 
     private readonly RoomModelService _roomModelService;
+    private List<RoomModel> _allRooms = new();
 
     [ObservableProperty]
     private ObservableCollection<RoomModel> _rooms = new();
@@ -35,6 +38,9 @@ public partial class RoomsViewModel : ViewModelBase
     private RoomTypeOption? _selectedRoomTypeOption;
 
     [ObservableProperty]
+    private RoomTypeOption? _editRoomTypeOption;
+
+    [ObservableProperty]
     private RoomModel? _selectedRoom;
 
     [ObservableProperty]
@@ -50,12 +56,28 @@ public partial class RoomsViewModel : ViewModelBase
     private string _newHeight = string.Empty;
 
     [ObservableProperty]
+    private string _searchText = string.Empty;
+
+    [ObservableProperty]
+    private string _editRoomName = string.Empty;
+
+    [ObservableProperty]
+    private string _editLength = string.Empty;
+
+    [ObservableProperty]
+    private string _editWidth = string.Empty;
+
+    [ObservableProperty]
+    private string _editHeight = string.Empty;
+
+    [ObservableProperty]
     private string _statusMessage = string.Empty;
 
     public RoomsViewModel(RoomModelService roomModelService)
     {
         _roomModelService = roomModelService;
         SelectedRoomTypeOption = RoomTypeOptions.FirstOrDefault();
+        EditRoomTypeOption = RoomTypeOptions.FirstOrDefault();
     }
 
     public async Task InitializeAsync()
@@ -68,8 +90,8 @@ public partial class RoomsViewModel : ViewModelBase
     {
         try
         {
-            var items = await _roomModelService.GetAllAsync();
-            Rooms = new ObservableCollection<RoomModel>(items);
+            _allRooms = await _roomModelService.GetAllAsync();
+            ApplyFilter();
             StatusMessage = $"Загружено помещений: {Rooms.Count}";
         }
         catch (Exception ex)
@@ -139,6 +161,79 @@ public partial class RoomsViewModel : ViewModelBase
     }
 
     [RelayCommand]
+    private async Task UpdateSelectedAsync()
+    {
+        if (SelectedRoom is null)
+        {
+            StatusMessage = "Выберите помещение для изменения.";
+            return;
+        }
+
+        var name = EditRoomName?.Trim() ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            StatusMessage = "Введите название помещения для изменения.";
+            return;
+        }
+
+        if (EditRoomTypeOption is null)
+        {
+            StatusMessage = "Выберите тип помещения для изменения.";
+            return;
+        }
+
+        if (!TryParsePositive(EditLength, out var length))
+        {
+            StatusMessage = "Введите корректную длину помещения (> 0).";
+            return;
+        }
+
+        if (!TryParsePositive(EditWidth, out var width))
+        {
+            StatusMessage = "Введите корректную ширину помещения (> 0).";
+            return;
+        }
+
+        if (!TryParsePositive(EditHeight, out var height))
+        {
+            StatusMessage = "Введите корректную высоту помещения (> 0).";
+            return;
+        }
+
+        try
+        {
+            var selectedId = SelectedRoom.Id;
+            await _roomModelService.UpdateAsync(
+                selectedId,
+                name,
+                EditRoomTypeOption.Value,
+                length,
+                width,
+                height);
+
+            await LoadAsync();
+            SelectedRoom = Rooms.FirstOrDefault(x => x.Id == selectedId);
+            StatusMessage = "Помещение успешно изменено.";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Ошибка при изменении: {ex.Message}";
+        }
+    }
+
+    [RelayCommand]
+    private void ClearSelection()
+    {
+        SelectedRoom = null;
+        EditRoomName = string.Empty;
+        EditLength = string.Empty;
+        EditWidth = string.Empty;
+        EditHeight = string.Empty;
+        EditRoomTypeOption = RoomTypeOptions.FirstOrDefault();
+        StatusMessage = "Выбор помещения сброшен.";
+    }
+
+    [RelayCommand]
     private async Task DeleteSelectedAsync()
     {
         if (SelectedRoom is null)
@@ -150,12 +245,62 @@ public partial class RoomsViewModel : ViewModelBase
         try
         {
             await _roomModelService.DeleteAsync(SelectedRoom.Id);
+            SelectedRoom = null;
+            EditRoomName = string.Empty;
+            EditLength = string.Empty;
+            EditWidth = string.Empty;
+            EditHeight = string.Empty;
+            EditRoomTypeOption = RoomTypeOptions.FirstOrDefault();
             await LoadAsync();
             StatusMessage = "Помещение удалено.";
         }
         catch (Exception ex)
         {
             StatusMessage = $"Ошибка при удалении: {ex.Message}";
+        }
+    }
+
+    partial void OnSelectedRoomChanged(RoomModel? value)
+    {
+        if (value is null)
+        {
+            EditRoomName = string.Empty;
+            EditLength = string.Empty;
+            EditWidth = string.Empty;
+            EditHeight = string.Empty;
+            EditRoomTypeOption = RoomTypeOptions.FirstOrDefault();
+            return;
+        }
+
+        EditRoomName = value.Name;
+        EditLength = value.Length.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        EditWidth = value.Width.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        EditHeight = value.Height.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        EditRoomTypeOption = RoomTypeOptions.FirstOrDefault(x => x.Value == value.RoomType);
+    }
+
+    partial void OnSearchTextChanged(string value) => ApplyFilter();
+
+    private void ApplyFilter()
+    {
+        IEnumerable<RoomModel> filtered = _allRooms;
+        var query = SearchText?.Trim();
+
+        if (!string.IsNullOrWhiteSpace(query))
+        {
+            filtered = filtered.Where(x =>
+                x.Name.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                x.RoomTypeDisplayName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                x.Length.ToString(System.Globalization.CultureInfo.InvariantCulture).Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                x.Width.ToString(System.Globalization.CultureInfo.InvariantCulture).Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                x.Height.ToString(System.Globalization.CultureInfo.InvariantCulture).Contains(query, StringComparison.OrdinalIgnoreCase));
+        }
+
+        Rooms = new ObservableCollection<RoomModel>(filtered);
+
+        if (SelectedRoom is not null)
+        {
+            SelectedRoom = Rooms.FirstOrDefault(x => x.Id == SelectedRoom.Id);
         }
     }
 

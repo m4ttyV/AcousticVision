@@ -64,6 +64,7 @@
 
                     <SolidColorBrush x:Key="AppSecondaryTextBrush">#4B5563</SolidColorBrush>
                     <SolidColorBrush x:Key="AppStatusTextBrush">#1D4ED8</SolidColorBrush>
+                    <SolidColorBrush x:Key="AppAccentBrush">#2563EB</SolidColorBrush>
 
                     <SolidColorBrush x:Key="AppNavButtonBackgroundBrush">#FFFFFF</SolidColorBrush>
                     <SolidColorBrush x:Key="AppNavButtonForegroundBrush">#111827</SolidColorBrush>
@@ -85,6 +86,7 @@
 
                     <SolidColorBrush x:Key="AppSecondaryTextBrush">#CBD5E1</SolidColorBrush>
                     <SolidColorBrush x:Key="AppStatusTextBrush">#93C5FD</SolidColorBrush>
+                    <SolidColorBrush x:Key="AppAccentBrush">#60A5FA</SolidColorBrush>
 
                     <SolidColorBrush x:Key="AppNavButtonBackgroundBrush">#1F2937</SolidColorBrush>
                     <SolidColorBrush x:Key="AppNavButtonForegroundBrush">#F8FAFC</SolidColorBrush>
