@@ -65,7 +65,9 @@ public partial class SourcesViewModel : ViewModelBase
     {
         try
         {
-            _allSources = await _soundSourceService.GetAllAsync();
+            _allSources = (await _soundSourceService.GetAllAsync())
+                .OrderBy(x => x.Id)
+                .ToList();
             ApplyFilter();
             StatusMessage = $"Загружено источников: {Sources.Count}";
         }

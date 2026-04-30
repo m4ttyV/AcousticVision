@@ -3,6 +3,7 @@ using AcousticVision.Models;
 using AcousticVision.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.Linq;
 using System.Collections.ObjectModel;
 using static AcousticVision.ViewModels.TestModelsViewModel;
 
@@ -92,9 +93,9 @@ public partial class TestModelsViewModel : ViewModelBase
         var sources = await _soundSourceService.GetAllAsync();
         var receivers = await _soundReceiverService.GetAllAsync();
 
-        Rooms = new ObservableCollection<RoomModel>(rooms);
-        Sources = new ObservableCollection<SoundSource>(sources);
-        Receivers = new ObservableCollection<SoundReceiver>(receivers);
+        Rooms = new ObservableCollection<RoomModel>(rooms.OrderBy(x => x.Id));
+        Sources = new ObservableCollection<SoundSource>(sources.OrderBy(x => x.Id));
+        Receivers = new ObservableCollection<SoundReceiver>(receivers.OrderBy(x => x.Id));
 
         if (SelectedRoom is null && Rooms.Count > 0)
             SelectedRoom = Rooms[0];
@@ -115,7 +116,7 @@ public partial class TestModelsViewModel : ViewModelBase
         try
         {
             var items = await _testModelService.GetAllAsync();
-            TestModels = new ObservableCollection<TestModel>(items);
+            TestModels = new ObservableCollection<TestModel>(items.OrderBy(x => x.Id));
             StatusMessage = $"Загружено тестовых моделей: {TestModels.Count}";
         }
         catch (Exception ex)

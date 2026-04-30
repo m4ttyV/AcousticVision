@@ -53,7 +53,9 @@ public partial class ReceiversViewModel : ViewModelBase
     {
         try
         {
-            _allReceivers = await _soundReceiverService.GetAllAsync();
+            _allReceivers = (await _soundReceiverService.GetAllAsync())
+                .OrderBy(x => x.Id)
+                .ToList();
             ApplyFilter();
             StatusMessage = $"Загружено приёмников: {Receivers.Count}";
         }

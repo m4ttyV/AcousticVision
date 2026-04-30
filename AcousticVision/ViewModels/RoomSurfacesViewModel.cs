@@ -3,6 +3,7 @@ using AcousticVision.Models;
 using AcousticVision.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.Linq;
 using System.Collections.ObjectModel;
 using static AcousticVision.ViewModels.RoomSurfacesViewModel;
 
@@ -57,9 +58,9 @@ public partial class RoomSurfacesViewModel : ViewModelBase
 
     private async Task LoadLookupsAsync()
     {
-        Rooms = new ObservableCollection<RoomModel>(await _roomModelService.GetAllAsync());
-        Materials = new ObservableCollection<Material>(await _materialService.GetAllAsync());
-        Textures = new ObservableCollection<Texture>(await _textureService.GetAllAsync());
+        Rooms = new ObservableCollection<RoomModel>((await _roomModelService.GetAllAsync()).OrderBy(x => x.Id));
+        Materials = new ObservableCollection<Material>((await _materialService.GetAllAsync()).OrderBy(x => x.Id));
+        Textures = new ObservableCollection<Texture>((await _textureService.GetAllAsync()).OrderBy(x => x.Id));
 
         SelectedRoom ??= Rooms.FirstOrDefault();
         SelectedMaterial ??= Materials.FirstOrDefault();
@@ -72,7 +73,9 @@ public partial class RoomSurfacesViewModel : ViewModelBase
     {
         try
         {
-            Surfaces = new ObservableCollection<RoomSurface>(await _roomSurfaceService.GetAllAsync());
+            Surfaces = new ObservableCollection<RoomSurface>((await _roomSurfaceService.GetAllAsync())
+                .OrderBy(x => x.Room != null ? x.Room.Name : string.Empty)
+                .ThenBy(x => x.Position));
             StatusMessage = $"Загружено поверхностей: {Surfaces.Count}";
         }
         catch (Exception ex)

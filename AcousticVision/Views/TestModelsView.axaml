@@ -94,10 +94,10 @@
                           AutoGenerateColumns="False" >
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="70"/>
-                        <DataGridTextColumn Header="Помещение" Binding="{Binding Room.Name}" Width="240"/>
-                        <DataGridTextColumn Header="Источник" Binding="{Binding Source.Name}" Width="160"/>
-                        <DataGridTextColumn Header="Приёмник" Binding="{Binding Receiver.Name}" Width="160"/>
-                        <DataGridTextColumn Header="Метод" Binding="{Binding AnalysisMethodDisplayName}" Width="180"/>
+                        <DataGridTextColumn Header="Помещение" Binding="{Binding Room.Name}" Width="*"/>
+                        <DataGridTextColumn Header="Источник" Binding="{Binding Source.Name}" Width="*"/>
+                        <DataGridTextColumn Header="Приёмник" Binding="{Binding Receiver.Name}" Width="*"/>
+                        <DataGridTextColumn Header="Метод" Binding="{Binding AnalysisMethodDisplayName}" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
     </Grid>

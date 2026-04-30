@@ -54,7 +54,9 @@ public partial class TexturesViewModel : ViewModelBase
     {
         try
         {
-            _allTextures = await _textureService.GetAllAsync();
+            _allTextures = (await _textureService.GetAllAsync())
+                .OrderBy(x => x.Id)
+                .ToList();
             ApplyFilter();
             StatusMessage = $"Загружено фактур: {Textures.Count}";
         }

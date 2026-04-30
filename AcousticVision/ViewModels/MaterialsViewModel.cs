@@ -47,7 +47,9 @@ public partial class MaterialsViewModel : ViewModelBase
     [RelayCommand]
     private async Task LoadAsync()
     {
-        _allMaterials = await _materialService.GetAllAsync();
+        _allMaterials = (await _materialService.GetAllAsync())
+            .OrderBy(x => x.Id)
+            .ToList();
         ApplyFilter();
         StatusMessage = $"Загружено материалов: {Materials.Count}";
     }

@@ -3,6 +3,7 @@ using AcousticVision.Models;
 using AcousticVision.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.Linq;
 
 namespace AcousticVision.ViewModels;
 
@@ -81,7 +82,7 @@ public partial class AnalysisViewModel : ViewModelBase
         try
         {
             var items = await _testModelService.GetAllAsync();
-            TestModels = new ObservableCollection<TestModel>(items);
+            TestModels = new ObservableCollection<TestModel>(items.OrderBy(x => x.Id));
 
             if (SelectedTestModel is null && TestModels.Count > 0)
                 SelectedTestModel = TestModels[0];

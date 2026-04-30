@@ -90,7 +90,9 @@ public partial class RoomsViewModel : ViewModelBase
     {
         try
         {
-            _allRooms = await _roomModelService.GetAllAsync();
+            _allRooms = (await _roomModelService.GetAllAsync())
+                .OrderBy(x => x.Id)
+                .ToList();
             ApplyFilter();
             StatusMessage = $"Загружено помещений: {Rooms.Count}";
         }
