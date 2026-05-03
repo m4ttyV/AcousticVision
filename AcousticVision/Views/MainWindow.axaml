@@ -7,7 +7,9 @@
     x:DataType="vm:MainWindowViewModel"
     Title="AcousticVision"
     Width="1350"
-    Height="870"
+    Height="915"
+    MinHeight="915"
+    MinWidth="1350"
     Background="{DynamicResource AppWindowBackgroundBrush}">
 
     <Window.DataTemplates>

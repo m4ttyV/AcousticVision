@@ -16,12 +16,12 @@
                    FontWeight="Bold"/>
 
         <Border Grid.Row="1" Classes="card">
-            <Grid RowDefinitions="Auto,Auto"
-                  ColumnDefinitions="Auto,*,Auto,Auto"
+            <Grid RowDefinitions="Auto,Auto,Auto"
+                  ColumnDefinitions="Auto,*"
                   ColumnSpacing="10"
                   RowSpacing="10">
                 <TextBlock Grid.Row="0"
-                           Grid.ColumnSpan="4"
+                           Grid.ColumnSpan="2"
                            Text="Запуск анализа"
                            FontWeight="Bold"/>
 
@@ -42,19 +42,31 @@
                     </ComboBox.ItemTemplate>
                 </ComboBox>
 
-                <Button Grid.Row="1"
-                        Grid.Column="2"
-                        Classes="action"
-                        Width="170"
-                        Content="Рассчитать"
-                        Command="{Binding RunAnalysisCommand}"/>
+                <StackPanel Grid.Row="2"
+                            Grid.ColumnSpan="2"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            Spacing="10">
+                    <Button Classes="action"
+                            Width="170"
+                            Content="Рассчитать"
+                            Command="{Binding RunAnalysisCommand}"/>
 
-                <Button Grid.Row="1"
-                        Grid.Column="3"
-                        Classes="action"
-                        Width="170"
-                        Content="Обновить список"
-                        Command="{Binding LoadCommand}"/>
+                    <Button Classes="action"
+                            Width="170"
+                            Content="Печать результата"
+                            Command="{Binding PrintReportCommand}"/>
+
+                    <Button Classes="action"
+                            Width="170"
+                            Content="Открыть отчёт"
+                            Command="{Binding OpenReportCommand}"/>
+
+                    <Button Classes="action"
+                            Width="170"
+                            Content="Обновить список"
+                            Command="{Binding LoadCommand}"/>
+                </StackPanel>
             </Grid>
         </Border>
 

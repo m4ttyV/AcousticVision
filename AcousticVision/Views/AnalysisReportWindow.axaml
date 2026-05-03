@@ -1,0 +1,116 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AcousticVision.ViewModels"
+        xmlns:controls="using:AcousticVision.Views.Controls"
+        x:Class="AcousticVision.Views.AnalysisReportWindow"
+        x:DataType="vm:AnalysisViewModel"
+        Title="Отчёт AcousticVision"
+        Width="1100"
+        Height="820"
+        MinWidth="900"
+        MinHeight="650"
+        Background="{DynamicResource AppWindowBackgroundBrush}">
+
+    <Grid RowDefinitions="Auto,*"
+          RowSpacing="12"
+          Margin="18">
+        <Border Grid.Row="0" Classes="card">
+            <Grid ColumnDefinitions="*,Auto,Auto"
+                  ColumnSpacing="10">
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Отчёт по результатам анализа"
+                               FontSize="20"
+                               FontWeight="Bold"/>
+                    <TextBlock Text="Отчет."
+                               Foreground="{DynamicResource AppSecondaryTextBrush}"
+                               TextWrapping="Wrap"/>
+                </StackPanel>
+
+                <Button Grid.Column="1"
+                        Classes="action"
+                        Width="170"
+                        VerticalAlignment="Center"
+                        Content="Печать результата"
+                        Command="{Binding PrintReportCommand}"/>
+
+                <Button Grid.Column="2"
+                        Classes="action"
+                        Width="120"
+                        VerticalAlignment="Center"
+                        Content="Закрыть"
+                        Click="CloseButton_Click"/>
+            </Grid>
+        </Border>
+
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="12">
+                <Border Classes="card">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Схема помещения с компасом"
+                                   FontWeight="Bold"
+                                   FontSize="16"/>
+                        <controls:RoomPreviewView DataContext="{Binding Preview}"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="card">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Результаты расчёта"
+                                   FontWeight="Bold"
+                                   FontSize="16"/>
+
+                        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                              ColumnDefinitions="260,*"
+                              RowSpacing="8"
+                              ColumnSpacing="14">
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Помещение:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ResultRoom}" TextWrapping="Wrap"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Источник:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ResultSource}" TextWrapping="Wrap"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Координаты источника:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding ResultSourceLocation}" TextWrapping="Wrap"/>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Приёмник:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding ResultReceiver}" TextWrapping="Wrap"/>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Координаты приёмника:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding ResultReceiverLocation}" TextWrapping="Wrap"/>
+
+                            <TextBlock Grid.Row="5" Grid.Column="0" Text="Расстояние источник–приёмник:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding ResultDistance}" TextWrapping="Wrap"/>
+
+                            <TextBlock Grid.Row="6" Grid.Column="0" Text="Использованная формула:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding ResultFormula}" TextWrapping="Wrap"/>
+
+                            <TextBlock Grid.Row="7" Grid.Column="0" Text="Ослабление прямого сигнала:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding ResultAttenuation}" TextWrapping="Wrap"/>
+
+                            <TextBlock Grid.Row="8" Grid.Column="0" Text="Условный уровень в точке:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding ResultDirectLevel}" TextWrapping="Wrap"/>
+
+                            <TextBlock Grid.Row="9" Grid.Column="0" Text="Объём помещения:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding ResultVolume}" TextWrapping="Wrap"/>
+
+                            <TextBlock Grid.Row="10" Grid.Column="0" Text="Эквивалентное поглощение:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="10" Grid.Column="1" Text="{Binding ResultAbsorption}" TextWrapping="Wrap"/>
+
+                            <TextBlock Grid.Row="11" Grid.Column="0" Text="RT60:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="11" Grid.Column="1" Text="{Binding ResultRt60}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+
+                            <TextBlock Grid.Row="12" Grid.Column="0" Text="Рекомендация:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="12" Grid.Column="1" Text="{Binding ResultRecommendation}" TextWrapping="Wrap"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <TextBlock Text="{Binding StatusMessage}"
+                           Foreground="{DynamicResource AppStatusTextBrush}"
+                           TextWrapping="Wrap"/>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>
