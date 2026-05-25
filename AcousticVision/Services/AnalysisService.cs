@@ -88,7 +88,9 @@ public class AnalysisService
             if (area <= 0)
                 continue;
 
-            var alpha = Clamp01(surface.Material?.NoiseCancelation ?? 0.0);
+            // Эффективный коэффициент учитывает материал и корректирующее влияние фактуры:
+            // alpha_eff = Clamp(alpha_material + 0.3 * alpha_texture, 0, 1).
+            var alpha = AcousticCalculationHelper.GetEffectiveAbsorption(surface);
 
             equivalentAbsorptionArea += area * alpha;
             totalSurfaceArea += area;
@@ -100,7 +102,7 @@ public class AnalysisService
         if (totalSurfaceArea <= 0)
             return Fail("Суммарная площадь поверхностей оказалась нулевой.");
 
-        var averageAbsorption = Clamp01(equivalentAbsorptionArea / totalSurfaceArea);
+        var averageAbsorption = AcousticCalculationHelper.Clamp01(equivalentAbsorptionArea / totalSurfaceArea);
 
         var resolvedMethod = ResolveAnalysisMethod(testModel.AnalysisMethod, averageAbsorption);
 
@@ -120,6 +122,15 @@ public class AnalysisService
         var sourceLevel = testModel.Source.Volume;
         var estimatedDirectLevelDb = sourceLevel - attenuationDb;
 
+        var sourceArticleFactor = AcousticCalculationHelper.GetSourceArticleFactor(testModel.Source.Article);
+        var directSignalFactor = AcousticCalculationHelper.GetDirectSignalFactor(estimatedDirectLevelDb);
+        var rt60Factor = AcousticCalculationHelper.GetRt60Factor(rt60, roomRequirement.MinRt60, roomRequirement.MaxRt60);
+        var perceivedClarity = AcousticCalculationHelper.GetPerceivedClarity(
+            directSignalFactor,
+            sourceArticleFactor,
+            rt60Factor);
+        var perceivedClarityLevel = AcousticCalculationHelper.GetClarityLevel(perceivedClarity);
+
         return new AnalysisResult
         {
             IsSuccess = true,
@@ -133,17 +144,26 @@ public class AnalysisService
             FormulaName = resolvedMethod.ToDisplayName(),
             Volume = volume,
             EquivalentAbsorptionArea = equivalentAbsorptionArea,
+            AverageAbsorption = averageAbsorption,
             Rt60 = rt60,
             SourceReceiverDistance = distance,
             DistanceAttenuationDb = attenuationDb,
             EstimatedDirectLevelDb = estimatedDirectLevelDb,
+            SourceArticleFactor = sourceArticleFactor,
+            DirectSignalFactor = directSignalFactor,
+            Rt60Factor = rt60Factor,
+            PerceivedClarity = perceivedClarity,
+            PerceivedClarityLevel = perceivedClarityLevel,
             Recommendation = BuildRecommendation(
                 room.RoomType,
                 roomRequirement.MinRt60,
                 roomRequirement.MaxRt60,
                 rt60,
                 distance,
-                estimatedDirectLevelDb)
+                estimatedDirectLevelDb,
+                sourceArticleFactor,
+                perceivedClarity,
+                perceivedClarityLevel)
         };
     }
 
@@ -182,13 +202,6 @@ public class AnalysisService
         };
     }
 
-    private static double Clamp01(double value)
-    {
-        if (value < 0) return 0;
-        if (value > 1) return 1;
-        return value;
-    }
-
     private static AnalysisResult Fail(string message)
     {
         return new AnalysisResult
@@ -204,7 +217,10 @@ public class AnalysisService
         double maxRt60,
         double rt60,
         double distance,
-        double directLevelDb)
+        double directLevelDb,
+        double sourceArticleFactor,
+        double perceivedClarity,
+        string perceivedClarityLevel)
     {
         var roomTypeName = roomType.ToDisplayName();
 
@@ -241,6 +257,17 @@ public class AnalysisService
             _ => "Оценочный уровень прямого сигнала в точке приёмника является достаточным."
         };
 
-        return $"{rtText} {distanceText} {levelText}";
+        string articleText = sourceArticleFactor switch
+        {
+            < 0.45 => "Артикуляция источника задана на низком уровне, что дополнительно снижает ожидаемую разборчивость речи.",
+            < 0.70 => "Артикуляция источника находится на среднем уровне и умеренно влияет на итоговую оценку восприятия речи.",
+            _ => "Артикуляция источника является достаточной и положительно влияет на восприятие речевого сигнала."
+        };
+
+        var clarityPercent = perceivedClarity * 100.0;
+        var clarityText =
+            $"Итоговая оценка воспринимаемой разборчивости — {perceivedClarityLevel} ({clarityPercent:F0}%).";
+
+        return $"{rtText} {distanceText} {levelText} {articleText} {clarityText}";
     }
 }

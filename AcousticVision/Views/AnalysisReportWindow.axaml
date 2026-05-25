@@ -60,8 +60,8 @@
                                    FontWeight="Bold"
                                    FontSize="16"/>
 
-                        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
-                              ColumnDefinitions="260,*"
+                        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                              ColumnDefinitions="280,*"
                               RowSpacing="8"
                               ColumnSpacing="14">
 
@@ -92,17 +92,29 @@
                             <TextBlock Grid.Row="8" Grid.Column="0" Text="Условный уровень в точке:" FontWeight="Bold"/>
                             <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding ResultDirectLevel}" TextWrapping="Wrap"/>
 
-                            <TextBlock Grid.Row="9" Grid.Column="0" Text="Объём помещения:" FontWeight="Bold"/>
-                            <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding ResultVolume}" TextWrapping="Wrap"/>
+                            <TextBlock Grid.Row="9" Grid.Column="0" Text="Артикуляция источника:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding ResultArticulation}" TextWrapping="Wrap"/>
 
-                            <TextBlock Grid.Row="10" Grid.Column="0" Text="Эквивалентное поглощение:" FontWeight="Bold"/>
-                            <TextBlock Grid.Row="10" Grid.Column="1" Text="{Binding ResultAbsorption}" TextWrapping="Wrap"/>
+                            <TextBlock Grid.Row="10" Grid.Column="0" Text="Коэффициент RT60:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="10" Grid.Column="1" Text="{Binding ResultRt60Factor}" TextWrapping="Wrap"/>
 
-                            <TextBlock Grid.Row="11" Grid.Column="0" Text="RT60:" FontWeight="Bold"/>
-                            <TextBlock Grid.Row="11" Grid.Column="1" Text="{Binding ResultRt60}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                            <TextBlock Grid.Row="11" Grid.Column="0" Text="Оценочная разборчивость:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="11" Grid.Column="1" Text="{Binding ResultPerceivedClarity}" FontWeight="SemiBold" TextWrapping="Wrap"/>
 
-                            <TextBlock Grid.Row="12" Grid.Column="0" Text="Рекомендация:" FontWeight="Bold"/>
-                            <TextBlock Grid.Row="12" Grid.Column="1" Text="{Binding ResultRecommendation}" TextWrapping="Wrap"/>
+                            <TextBlock Grid.Row="12" Grid.Column="0" Text="Объём помещения:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="12" Grid.Column="1" Text="{Binding ResultVolume}" TextWrapping="Wrap"/>
+
+                            <TextBlock Grid.Row="13" Grid.Column="0" Text="Эквивалентное поглощение:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="13" Grid.Column="1" Text="{Binding ResultAbsorption}" TextWrapping="Wrap"/>
+
+                            <TextBlock Grid.Row="14" Grid.Column="0" Text="Средний коэффициент поглощения:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="14" Grid.Column="1" Text="{Binding ResultAverageAbsorption}" TextWrapping="Wrap"/>
+
+                            <TextBlock Grid.Row="15" Grid.Column="0" Text="RT60:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="15" Grid.Column="1" Text="{Binding ResultRt60}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+
+                            <TextBlock Grid.Row="16" Grid.Column="0" Text="Рекомендация:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="16" Grid.Column="1" Text="{Binding ResultRecommendation}" TextWrapping="Wrap"/>
                         </Grid>
                     </StackPanel>
                 </Border>

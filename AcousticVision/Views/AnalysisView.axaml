@@ -77,14 +77,14 @@
             </StackPanel>
         </Border>
 
-        <Grid Grid.Row="3" RowDefinitions="150,Auto" RowSpacing="10">
+        <Grid Grid.Row="3" RowDefinitions="190,Auto" RowSpacing="10">
             <Border Grid.Row="0" Classes="card">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel Spacing="8">
                         <TextBlock Text="Результат анализа" FontWeight="Bold"/>
 
-                        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
-                              ColumnDefinitions="240,*"
+                        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                              ColumnDefinitions="260,*"
                               RowSpacing="6"
                               ColumnSpacing="12">
 
@@ -115,19 +115,29 @@
                             <TextBlock Grid.Row="8" Grid.Column="0" Text="Условный уровень в точке:" FontWeight="Bold"/>
                             <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding ResultDirectLevel}"/>
 
-                            <TextBlock Grid.Row="9" Grid.Column="0" Text="Объём помещения:" FontWeight="Bold"/>
-                            <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding ResultVolume}"/>
+                            <TextBlock Grid.Row="9" Grid.Column="0" Text="Артикуляция источника:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding ResultArticulation}"/>
 
-                            <TextBlock Grid.Row="10" Grid.Column="0" Text="Эквивалентное поглощение:" FontWeight="Bold"/>
-                            <TextBlock Grid.Row="10" Grid.Column="1" Text="{Binding ResultAbsorption}"/>
+                            <TextBlock Grid.Row="10" Grid.Column="0" Text="Коэффициент RT60:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="10" Grid.Column="1" Text="{Binding ResultRt60Factor}"/>
 
-                            <TextBlock Grid.Row="11" Grid.Column="0" Text="RT60:" FontWeight="Bold"/>
-                            <TextBlock Grid.Row="11" Grid.Column="1" Text="{Binding ResultRt60}" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="11" Grid.Column="0" Text="Оценочная разборчивость:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="11" Grid.Column="1" Text="{Binding ResultPerceivedClarity}" FontWeight="SemiBold"/>
 
-                            <TextBlock Grid.Row="12" Grid.Column="0" Text="Рекомендация:" FontWeight="Bold"/>
-                            <StackPanel Grid.Row="12" Grid.Column="1" Spacing="4">
-                                <TextBlock Text="{Binding ResultRecommendation}" TextWrapping="Wrap"/>
-                            </StackPanel>
+                            <TextBlock Grid.Row="12" Grid.Column="0" Text="Объём помещения:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="12" Grid.Column="1" Text="{Binding ResultVolume}"/>
+
+                            <TextBlock Grid.Row="13" Grid.Column="0" Text="Эквивалентное поглощение:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="13" Grid.Column="1" Text="{Binding ResultAbsorption}"/>
+
+                            <TextBlock Grid.Row="14" Grid.Column="0" Text="Средний коэффициент поглощения:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="14" Grid.Column="1" Text="{Binding ResultAverageAbsorption}"/>
+
+                            <TextBlock Grid.Row="15" Grid.Column="0" Text="RT60:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="15" Grid.Column="1" Text="{Binding ResultRt60}" FontWeight="SemiBold"/>
+
+                            <TextBlock Grid.Row="16" Grid.Column="0" Text="Рекомендация:" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="16" Grid.Column="1" Text="{Binding ResultRecommendation}" TextWrapping="Wrap"/>
                         </Grid>
                     </StackPanel>
                 </ScrollViewer>

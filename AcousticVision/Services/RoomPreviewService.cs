@@ -33,6 +33,7 @@ public class RoomPreviewService
 
         var surfaces = await _dbContext.RoomSurfaces
             .Include(x => x.Material)
+            .Include(x => x.Texture)
             .Where(x => x.RoomId == room.Id)
             .ToListAsync();
 
@@ -127,7 +128,10 @@ public class RoomPreviewService
             return new SurfaceDescriptor(positionName, null, null);
         }
 
-        return new SurfaceDescriptor(positionName, surface.Material.Name, surface.Material.NoiseCancelation);
+        return new SurfaceDescriptor(
+            positionName,
+            surface.Material.Name,
+            AcousticCalculationHelper.GetEffectiveAbsorption(surface));
     }
 
     private sealed record SurfaceDescriptor(string PositionName, string? MaterialName, double? Absorption);

@@ -71,6 +71,18 @@ public partial class AnalysisViewModel : ViewModelBase
     [ObservableProperty]
     private string _resultFormula = string.Empty;
 
+    [ObservableProperty]
+    private string _resultAverageAbsorption = string.Empty;
+
+    [ObservableProperty]
+    private string _resultArticulation = string.Empty;
+
+    [ObservableProperty]
+    private string _resultRt60Factor = string.Empty;
+
+    [ObservableProperty]
+    private string _resultPerceivedClarity = string.Empty;
+
     public bool HasResult => !string.IsNullOrWhiteSpace(ResultRoom);
 
     public AnalysisViewModel(AnalysisService analysisService, TestModelService testModelService, RoomPreviewService roomPreviewService)
@@ -137,10 +149,14 @@ public partial class AnalysisViewModel : ViewModelBase
             ResultDirectLevel = $"{result.EstimatedDirectLevelDb:F2} дБ";
             ResultVolume = $"{result.Volume:F2} м³";
             ResultAbsorption = $"{result.EquivalentAbsorptionArea:F2} м²";
+            ResultAverageAbsorption = $"{result.AverageAbsorption:F3}";
             ResultRt60 = $"{result.Rt60:F3} с";
+            ResultFormula = result.FormulaName;
+            ResultArticulation = $"{result.SourceArticleFactor:F2}";
+            ResultRt60Factor = $"{result.Rt60Factor:F2}";
+            ResultPerceivedClarity = $"{result.PerceivedClarity * 100.0:F0}% ({result.PerceivedClarityLevel})";
             ResultRecommendation = result.Recommendation;
             StatusMessage = result.Message;
-            ResultFormula = result.FormulaName;
             OnPropertyChanged(nameof(HasResult));
         }
         catch (Exception ex)
@@ -248,8 +264,12 @@ public partial class AnalysisViewModel : ViewModelBase
         ResultDirectLevel = string.Empty;
         ResultVolume = string.Empty;
         ResultAbsorption = string.Empty;
+        ResultAverageAbsorption = string.Empty;
         ResultRt60 = string.Empty;
         ResultFormula = string.Empty;
+        ResultArticulation = string.Empty;
+        ResultRt60Factor = string.Empty;
+        ResultPerceivedClarity = string.Empty;
         ResultRecommendation = string.Empty;
         OnPropertyChanged(nameof(HasResult));
     }
@@ -423,8 +443,12 @@ public partial class AnalysisViewModel : ViewModelBase
             ("Использованная формула", ResultFormula),
             ("Ослабление прямого сигнала", ResultAttenuation),
             ("Условный уровень в точке", ResultDirectLevel),
+            ("Артикуляция источника", ResultArticulation),
+            ("Коэффициент RT60", ResultRt60Factor),
+            ("Оценочная разборчивость", ResultPerceivedClarity),
             ("Объём помещения", ResultVolume),
             ("Эквивалентное поглощение", ResultAbsorption),
+            ("Средний коэффициент поглощения", ResultAverageAbsorption),
             ("RT60", ResultRt60),
             ("Рекомендация", ResultRecommendation)
         };
