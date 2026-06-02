@@ -47,7 +47,7 @@
             <StackPanel Spacing="12">
                 <Border Classes="card">
                     <StackPanel Spacing="10">
-                        <TextBlock Text="Схема помещения с компасом"
+                        <TextBlock Text="Визуализация конфигурации"
                                    FontWeight="Bold"
                                    FontSize="16"/>
                         <controls:RoomPreviewView DataContext="{Binding Preview}"/>

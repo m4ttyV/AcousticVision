@@ -47,6 +47,31 @@ public class TestModelService
         return model;
     }
 
+    public async Task<TestModel> UpdateAsync(
+        int id,
+        int roomId,
+        int sourceId,
+        int receiverId,
+        string sourceLocation,
+        string receiverLocation,
+        AnalysisMethod analysisMethod)
+    {
+        var model = await _dbContext.TestModels.FirstOrDefaultAsync(x => x.Id == id);
+        if (model is null)
+            throw new InvalidOperationException("Тестовая модель не найдена.");
+
+        model.RoomId = roomId;
+        model.SourceId = sourceId;
+        model.ReceiverId = receiverId;
+        model.SourceLocation = sourceLocation.Trim();
+        model.ReceiverLocation = receiverLocation.Trim();
+        model.AnalysisMethod = analysisMethod;
+
+        await _dbContext.SaveChangesAsync();
+
+        return model;
+    }
+
     public async Task DeleteAsync(int id)
     {
         var model = await _dbContext.TestModels.FirstOrDefaultAsync(x => x.Id == id);

@@ -3,9 +3,8 @@ using AcousticVision.Models;
 using AcousticVision.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System.Linq;
 using System.Collections.ObjectModel;
-using static AcousticVision.ViewModels.TestModelsViewModel;
+using System.Linq;
 
 namespace AcousticVision.ViewModels;
 
@@ -97,17 +96,10 @@ public partial class TestModelsViewModel : ViewModelBase
         Sources = new ObservableCollection<SoundSource>(sources.OrderBy(x => x.Id));
         Receivers = new ObservableCollection<SoundReceiver>(receivers.OrderBy(x => x.Id));
 
-        if (SelectedRoom is null && Rooms.Count > 0)
-            SelectedRoom = Rooms[0];
-
-        if (SelectedSource is null && Sources.Count > 0)
-            SelectedSource = Sources[0];
-
-        if (SelectedReceiver is null && Receivers.Count > 0)
-            SelectedReceiver = Receivers[0];
-
-        if (SelectedAnalysisMethodOption is null && AnalysisMethodOptions.Count > 0)
-            SelectedAnalysisMethodOption = AnalysisMethodOptions[0];
+        SelectedRoom ??= Rooms.FirstOrDefault();
+        SelectedSource ??= Sources.FirstOrDefault();
+        SelectedReceiver ??= Receivers.FirstOrDefault();
+        SelectedAnalysisMethodOption ??= AnalysisMethodOptions.FirstOrDefault();
     }
 
     [RelayCommand]
@@ -115,8 +107,13 @@ public partial class TestModelsViewModel : ViewModelBase
     {
         try
         {
+            var selectedId = SelectedTestModel?.Id;
             var items = await _testModelService.GetAllAsync();
             TestModels = new ObservableCollection<TestModel>(items.OrderBy(x => x.Id));
+
+            if (selectedId is not null)
+                SelectedTestModel = TestModels.FirstOrDefault(x => x.Id == selectedId.Value);
+
             StatusMessage = $"Загружено тестовых моделей: {TestModels.Count}";
         }
         catch (Exception ex)
@@ -130,62 +127,63 @@ public partial class TestModelsViewModel : ViewModelBase
     {
         StatusMessage = string.Empty;
 
-        if (SelectedRoom is null)
-        {
-            StatusMessage = "Выберите помещение.";
+        if (!ValidateForm())
             return;
-        }
-
-        if (SelectedSource is null)
-        {
-            StatusMessage = "Выберите источник.";
-            return;
-        }
-
-        if (SelectedReceiver is null)
-        {
-            StatusMessage = "Выберите приёмник.";
-            return;
-        }
-
-        if (SelectedAnalysisMethodOption is null)
-        {
-            StatusMessage = "Выберите метод расчёта.";
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(NewSourceLocation))
-        {
-            StatusMessage = "Введите координаты источника.";
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(NewReceiverLocation))
-        {
-            StatusMessage = "Введите координаты приёмника.";
-            return;
-        }
 
         try
         {
-            await _testModelService.AddAsync(
-                SelectedRoom.Id,
-                SelectedSource.Id,
-                SelectedReceiver.Id,
+            var added = await _testModelService.AddAsync(
+                SelectedRoom!.Id,
+                SelectedSource!.Id,
+                SelectedReceiver!.Id,
                 NewSourceLocation,
                 NewReceiverLocation,
-                SelectedAnalysisMethodOption.Value);
-
-            NewSourceLocation = string.Empty;
-            NewReceiverLocation = string.Empty;
-            SelectedAnalysisMethodOption = AnalysisMethodOptions.FirstOrDefault();
+                SelectedAnalysisMethodOption!.Value);
 
             await LoadTestModelsAsync();
+            SelectedTestModel = TestModels.FirstOrDefault(x => x.Id == added.Id);
             StatusMessage = "Тестовая модель успешно добавлена.";
         }
         catch (Exception ex)
         {
             StatusMessage = $"Ошибка при добавлении: {ex.Message}";
+        }
+    }
+
+    [RelayCommand]
+    private async Task UpdateSelectedAsync()
+    {
+        StatusMessage = string.Empty;
+
+        if (SelectedTestModel is null)
+        {
+            StatusMessage = "Выберите тестовую модель для редактирования.";
+            return;
+        }
+
+        if (!ValidateForm())
+            return;
+
+        try
+        {
+            var id = SelectedTestModel.Id;
+
+            await _testModelService.UpdateAsync(
+                id,
+                SelectedRoom!.Id,
+                SelectedSource!.Id,
+                SelectedReceiver!.Id,
+                NewSourceLocation,
+                NewReceiverLocation,
+                SelectedAnalysisMethodOption!.Value);
+
+            await LoadTestModelsAsync();
+            SelectedTestModel = TestModels.FirstOrDefault(x => x.Id == id);
+            StatusMessage = "Изменения тестовой модели сохранены.";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Ошибка при сохранении изменений: {ex.Message}";
         }
     }
 
@@ -201,6 +199,8 @@ public partial class TestModelsViewModel : ViewModelBase
         try
         {
             await _testModelService.DeleteAsync(SelectedTestModel.Id);
+            SelectedTestModel = null;
+            ClearFormFields(resetLookups: false);
             await LoadTestModelsAsync();
             StatusMessage = "Тестовая модель удалена.";
         }
@@ -208,5 +208,82 @@ public partial class TestModelsViewModel : ViewModelBase
         {
             StatusMessage = $"Ошибка при удалении: {ex.Message}";
         }
+    }
+
+    [RelayCommand]
+    private void ClearForm()
+    {
+        SelectedTestModel = null;
+        ClearFormFields(resetLookups: true);
+        StatusMessage = "Форма очищена. Можно добавить новую тестовую модель.";
+    }
+
+    partial void OnSelectedTestModelChanged(TestModel? value)
+    {
+        if (value is null)
+            return;
+
+        SelectedRoom = Rooms.FirstOrDefault(x => x.Id == value.RoomId) ?? value.Room;
+        SelectedSource = Sources.FirstOrDefault(x => x.Id == value.SourceId) ?? value.Source;
+        SelectedReceiver = Receivers.FirstOrDefault(x => x.Id == value.ReceiverId) ?? value.Receiver;
+        SelectedAnalysisMethodOption = AnalysisMethodOptions.FirstOrDefault(x => x.Value == value.AnalysisMethod)
+                                       ?? AnalysisMethodOptions.FirstOrDefault();
+        NewSourceLocation = value.SourceLocation;
+        NewReceiverLocation = value.ReceiverLocation;
+    }
+
+    private bool ValidateForm()
+    {
+        if (SelectedRoom is null)
+        {
+            StatusMessage = "Выберите помещение.";
+            return false;
+        }
+
+        if (SelectedSource is null)
+        {
+            StatusMessage = "Выберите источник.";
+            return false;
+        }
+
+        if (SelectedReceiver is null)
+        {
+            StatusMessage = "Выберите приёмник.";
+            return false;
+        }
+
+        if (SelectedAnalysisMethodOption is null)
+        {
+            StatusMessage = "Выберите метод расчёта.";
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(NewSourceLocation))
+        {
+            StatusMessage = "Введите координаты источника.";
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(NewReceiverLocation))
+        {
+            StatusMessage = "Введите координаты приёмника.";
+            return false;
+        }
+
+        return true;
+    }
+
+    private void ClearFormFields(bool resetLookups)
+    {
+        NewSourceLocation = string.Empty;
+        NewReceiverLocation = string.Empty;
+
+        if (!resetLookups)
+            return;
+
+        SelectedRoom = Rooms.FirstOrDefault();
+        SelectedSource = Sources.FirstOrDefault();
+        SelectedReceiver = Receivers.FirstOrDefault();
+        SelectedAnalysisMethodOption = AnalysisMethodOptions.FirstOrDefault();
     }
 }

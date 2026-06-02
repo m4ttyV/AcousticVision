@@ -56,7 +56,7 @@ public sealed class RoomPreviewViewModel
     public double ReceiverY { get; init; }
     public double MarkerSize { get; init; } = 16;
     
-    public Avalonia.Thickness CompassMargin => new Avalonia.Thickness(0, RoomY + RoomHeight + 35, 0, 0);
+    public Avalonia.Thickness CompassMargin => new Avalonia.Thickness(0, CanvasHeight + 10, 0, 0);
 
     public string SourceInfo { get; init; } = string.Empty;
     public string ReceiverInfo { get; init; } = string.Empty;

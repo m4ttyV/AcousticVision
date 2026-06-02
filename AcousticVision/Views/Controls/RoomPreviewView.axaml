@@ -14,7 +14,7 @@
             </StackPanel>
 
             <Grid Grid.Row="1"
-                  ColumnDefinitions="Auto,340,84"
+                  ColumnDefinitions="Auto,500,84"
                   ColumnSpacing="14">
                 <Border Width="{Binding CanvasWidth}"
                         Height="{Binding CanvasHeight}"
@@ -153,7 +153,7 @@
                 <StackPanel Grid.Column="1"
                             Margin="40,-50,0,0"
                             Spacing="10"
-                            Width="340"
+                            Width="500"
                             VerticalAlignment="Top"
                             HorizontalAlignment="Right">
                     <TextBlock Text="Ориентация и поверхности"
@@ -178,14 +178,13 @@
                         </Grid>
                     </Border>
 
-                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                    <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="10">
                         <Border Classes="card"
                                 Padding="10"
                                 Background="{Binding FloorBrush}"
                                 BorderThickness="1"
                                 MinHeight="66">
                             <StackPanel Spacing="3">
-                                <TextBlock Text="Пол" FontWeight="SemiBold"/>
                                 <TextBlock Text="{Binding FloorLabel}" TextWrapping="Wrap"/>
                             </StackPanel>
                         </Border>
@@ -197,23 +196,17 @@
                                 BorderThickness="1"
                                 MinHeight="66">
                             <StackPanel Spacing="3">
-                                <TextBlock Text="Потолок" FontWeight="SemiBold"/>
                                 <TextBlock Text="{Binding CeilingLabel}" TextWrapping="Wrap"/>
                             </StackPanel>
                         </Border>
-                    </Grid>
 
-                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-                        <Border Classes="card" Padding="10" MinHeight="84">
+                        <Border Grid.Column="2" Classes="card" Padding="10" MinHeight="84">
                             <StackPanel Spacing="4">
-                                <TextBlock Text="Источник" FontWeight="SemiBold"/>
                                 <TextBlock Text="{Binding SourceInfo}" TextWrapping="Wrap"/>
                             </StackPanel>
                         </Border>
-
-                        <Border Grid.Column="1" Classes="card" Padding="10" MinHeight="84">
+                          <Border Grid.Column="3" Classes="card" Padding="10" MinHeight="84">
                             <StackPanel Spacing="4">
-                                <TextBlock Text="Приёмник" FontWeight="SemiBold"/>
                                 <TextBlock Text="{Binding ReceiverInfo}" TextWrapping="Wrap"/>
                             </StackPanel>
                         </Border>

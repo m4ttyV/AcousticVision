@@ -16,7 +16,7 @@
 
         <Border Grid.Row="1" Classes="card">
             <StackPanel Spacing="8">
-                <TextBlock Text="Создание тестовой модели" FontWeight="Bold"/>
+                <TextBlock Text="Создание и редактирование тестовой модели" FontWeight="Bold"/>
 
                 <TextBlock Text="Помещение"/>
                 <ComboBox ItemsSource="{Binding Rooms}"
@@ -66,10 +66,23 @@
                     </ComboBox.ItemTemplate>
                 </ComboBox>
 
+                <TextBlock Text="Чтобы изменить существующую тестовую модель, выберите её в таблице, поправьте поля выше и нажмите «Сохранить изменения»."
+                           TextWrapping="Wrap"
+                           FontSize="12"
+                           Foreground="{DynamicResource AppSecondaryTextBrush}"/>
+
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <Button Classes="action"
                             Content="Добавить"
                             Command="{Binding AddTestModelCommand}"/>
+
+                    <Button Classes="action"
+                            Content="Сохранить изменения"
+                            Command="{Binding UpdateSelectedCommand}"/>
+
+                    <Button Classes="action"
+                            Content="Очистить форму"
+                            Command="{Binding ClearFormCommand}"/>
 
                     <Button Classes="action"
                             Content="Обновить список"
@@ -97,6 +110,8 @@
                         <DataGridTextColumn Header="Помещение" Binding="{Binding Room.Name}" Width="*"/>
                         <DataGridTextColumn Header="Источник" Binding="{Binding Source.Name}" Width="*"/>
                         <DataGridTextColumn Header="Приёмник" Binding="{Binding Receiver.Name}" Width="*"/>
+                        <DataGridTextColumn Header="Координаты источника" Binding="{Binding SourceLocation}" Width="*"/>
+                        <DataGridTextColumn Header="Координаты приёмника" Binding="{Binding ReceiverLocation}" Width="*"/>
                         <DataGridTextColumn Header="Метод" Binding="{Binding AnalysisMethodDisplayName}" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
