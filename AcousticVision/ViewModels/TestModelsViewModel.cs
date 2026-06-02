@@ -20,6 +20,7 @@ public partial class TestModelsViewModel : ViewModelBase
     private readonly RoomModelService _roomModelService;
     private readonly SoundSourceService _soundSourceService;
     private readonly SoundReceiverService _soundReceiverService;
+    private List<TestModel> _allTestModels = new();
 
     [ObservableProperty]
     private ObservableCollection<TestModel> _testModels = new();
@@ -62,6 +63,9 @@ public partial class TestModelsViewModel : ViewModelBase
 
     [ObservableProperty]
     private string _newReceiverLocation = string.Empty;
+
+    [ObservableProperty]
+    private string _searchText = string.Empty;
 
     [ObservableProperty]
     private string _statusMessage = string.Empty;
@@ -109,12 +113,14 @@ public partial class TestModelsViewModel : ViewModelBase
         {
             var selectedId = SelectedTestModel?.Id;
             var items = await _testModelService.GetAllAsync();
-            TestModels = new ObservableCollection<TestModel>(items.OrderBy(x => x.Id));
+            _allTestModels = items.OrderBy(x => x.Id).ToList();
+
+            ApplyFilter();
 
             if (selectedId is not null)
                 SelectedTestModel = TestModels.FirstOrDefault(x => x.Id == selectedId.Value);
 
-            StatusMessage = $"Загружено тестовых моделей: {TestModels.Count}";
+            StatusMessage = BuildLoadedMessage();
         }
         catch (Exception ex)
         {
@@ -218,6 +224,13 @@ public partial class TestModelsViewModel : ViewModelBase
         StatusMessage = "Форма очищена. Можно добавить новую тестовую модель.";
     }
 
+    [RelayCommand]
+    private void ClearSearch()
+    {
+        SearchText = string.Empty;
+        StatusMessage = BuildLoadedMessage();
+    }
+
     partial void OnSelectedTestModelChanged(TestModel? value)
     {
         if (value is null)
@@ -230,6 +243,48 @@ public partial class TestModelsViewModel : ViewModelBase
                                        ?? AnalysisMethodOptions.FirstOrDefault();
         NewSourceLocation = value.SourceLocation;
         NewReceiverLocation = value.ReceiverLocation;
+    }
+
+    partial void OnSearchTextChanged(string value)
+    {
+        var selectedId = SelectedTestModel?.Id;
+        ApplyFilter();
+
+        if (selectedId is not null)
+            SelectedTestModel = TestModels.FirstOrDefault(x => x.Id == selectedId.Value);
+
+        StatusMessage = BuildLoadedMessage();
+    }
+
+    private void ApplyFilter()
+    {
+        IEnumerable<TestModel> filtered = _allTestModels;
+        var query = SearchText?.Trim();
+
+        if (!string.IsNullOrWhiteSpace(query))
+        {
+            filtered = filtered.Where(x =>
+                x.Id.ToString().Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                (x.Room?.Name?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (x.Source?.Name?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (x.Receiver?.Name?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                x.SourceLocation.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                x.ReceiverLocation.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                x.AnalysisMethodDisplayName.Contains(query, StringComparison.OrdinalIgnoreCase));
+        }
+
+        TestModels = new ObservableCollection<TestModel>(filtered);
+
+        if (SelectedTestModel is not null)
+            SelectedTestModel = TestModels.FirstOrDefault(x => x.Id == SelectedTestModel.Id);
+    }
+
+    private string BuildLoadedMessage()
+    {
+        if (string.IsNullOrWhiteSpace(SearchText))
+            return $"Загружено тестовых моделей: {TestModels.Count}";
+
+        return $"Найдено тестовых моделей: {TestModels.Count} из {_allTestModels.Count}";
     }
 
     private bool ValidateForm()

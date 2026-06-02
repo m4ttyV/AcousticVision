@@ -23,7 +23,6 @@
         <Border Grid.Row="2" Classes="card">
             <StackPanel Spacing="8">
                 <TextBlock Text="Изменение выбранного приёмника" FontWeight="Bold"/>
-                <TextBox Watermark="Поиск по названию или свойствам" Text="{Binding SearchText}"/>
                 <TextBox Watermark="Название приёмника" Text="{Binding EditReceiverName}"/>
                 <TextBox Watermark="Дополнительные свойства" Text="{Binding EditProperties}"/>
                 <StackPanel Orientation="Horizontal" Spacing="8">
@@ -34,13 +33,14 @@
         </Border>
 
         <Border Grid.Row="3" Classes="card" ClipToBounds="True">
-    <Grid RowDefinitions="Auto,*"
+    <Grid RowDefinitions="Auto,Auto,*"
           RowSpacing="8">
         <TextBlock Grid.Row="0"
                    Text="Список приёмников"
                    FontWeight="Bold"/>
+                <TextBox Grid.Row="1" Watermark="Поиск по названию или свойствам" Text="{Binding SearchText}"/>
 
-        <DataGrid VerticalAlignment="Stretch" Grid.Row="1" ItemsSource="{Binding Receivers}" SelectedItem="{Binding SelectedReceiver}" AutoGenerateColumns="False" >
+        <DataGrid VerticalAlignment="Stretch" Grid.Row="2" ItemsSource="{Binding Receivers}" SelectedItem="{Binding SelectedReceiver}" AutoGenerateColumns="False" >
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="70"/>
                         <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="220"/>

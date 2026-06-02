@@ -13,7 +13,7 @@
                 <TextBox Watermark="Название источника" Text="{Binding NewSourceName}"/>
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
                     <TextBox Grid.Column="0" Watermark="Громкость" Text="{Binding NewVolume}"/>
-                    <TextBox Grid.Column="1" Watermark="Article (0..1, необязательно)" Text="{Binding NewArticle}"/>
+                    <TextBox Grid.Column="1" Watermark="Артикуляция (0..1, необязательно)" Text="{Binding NewArticle}"/>
                 </Grid>
                 <TextBox Watermark="Дополнительные свойства" Text="{Binding NewProperties}"/>
                 <StackPanel Orientation="Horizontal" Spacing="8">
@@ -27,11 +27,10 @@
         <Border Grid.Row="2" Classes="card">
             <StackPanel Spacing="8">
                 <TextBlock Text="Изменение выбранного источника" FontWeight="Bold"/>
-                <TextBox Watermark="Поиск по названию, громкости, Article или свойствам" Text="{Binding SearchText}"/>
                 <TextBox Watermark="Название источника" Text="{Binding EditSourceName}"/>
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
                     <TextBox Grid.Column="0" Watermark="Громкость" Text="{Binding EditVolume}"/>
-                    <TextBox Grid.Column="1" Watermark="Article (0..1, необязательно)" Text="{Binding EditArticle}"/>
+                    <TextBox Grid.Column="1" Watermark="Артикуляция (0..1, необязательно)" Text="{Binding EditArticle}"/>
                 </Grid>
                 <TextBox Watermark="Дополнительные свойства" Text="{Binding EditProperties}"/>
                 <StackPanel Orientation="Horizontal" Spacing="8">
@@ -42,13 +41,14 @@
         </Border>
 
         <Border Grid.Row="3" Classes="card" ClipToBounds="True">
-    <Grid RowDefinitions="Auto,*"
+    <Grid RowDefinitions="Auto,Auto,*"
           RowSpacing="8">
         <TextBlock Grid.Row="0"
                    Text="Список источников"
                    FontWeight="Bold"/>
 
-        <DataGrid VerticalAlignment="Stretch" Grid.Row="1" ItemsSource="{Binding Sources}" SelectedItem="{Binding SelectedSource}" AutoGenerateColumns="False" >
+        <TextBox Grid.Row="1" Watermark="Поиск по названию, громкости, артикуляции или свойствам" Text="{Binding SearchText}"/>
+        <DataGrid VerticalAlignment="Stretch" Grid.Row="2" ItemsSource="{Binding Sources}" SelectedItem="{Binding SelectedSource}" AutoGenerateColumns="False" >
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="70"/>
                         <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="220"/>

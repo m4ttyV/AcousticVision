@@ -65,8 +65,7 @@
             <StackPanel Spacing="8">
                 <TextBlock Text="Изменение выбранного помещения" FontWeight="Bold"/>
 
-                <TextBox Watermark="Поиск по названию, типу или размерам"
-                         Text="{Binding SearchText}"/>
+    
 
                 <TextBox Watermark="Название помещения"
                          Text="{Binding EditRoomName}"/>
@@ -109,13 +108,14 @@
         </Border>
 
         <Border Grid.Row="3" Classes="card" ClipToBounds="True">
-    <Grid RowDefinitions="Auto,*"
+    <Grid RowDefinitions="Auto,Auto,*"
           RowSpacing="8">
         <TextBlock Grid.Row="0"
                    Text="Список помещений"
                    FontWeight="Bold"/>
-
-        <DataGrid VerticalAlignment="Stretch" Grid.Row="1" ItemsSource="{Binding Rooms}"
+        <TextBox  Grid.Row="1" Watermark="Поиск по названию, типу или размерам"
+                Text="{Binding SearchText}"/>
+        <DataGrid VerticalAlignment="Stretch" Grid.Row="2" ItemsSource="{Binding Rooms}"
                           SelectedItem="{Binding SelectedRoom}"
                           AutoGenerateColumns="False" >
                     <DataGrid.Columns>

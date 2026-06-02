@@ -39,8 +39,7 @@
             <StackPanel Spacing="8">
                 <TextBlock Text="Изменение выбранного материала" FontWeight="Bold"/>
 
-                <TextBox Watermark="Поиск по названию или коэффициенту"
-                         Text="{Binding SearchText}"/>
+                
 
                 <TextBox Watermark="Название материала"
                          Text="{Binding EditMaterialName}"/>
@@ -59,13 +58,14 @@
         </Border>
 
         <Border Grid.Row="3" Classes="card" ClipToBounds="True">
-            <Grid RowDefinitions="Auto,*"
+            <Grid RowDefinitions="Auto,Auto,*"
                   RowSpacing="8">
                 <TextBlock Grid.Row="0"
                            Text="Список материалов"
                            FontWeight="Bold"/>
-
-                <DataGrid Grid.Row="1"
+                <TextBox Grid.Row="1" Watermark="Поиск по названию или коэффициенту"
+                         Text="{Binding SearchText}"/>
+                <DataGrid Grid.Row="2"
                           ItemsSource="{Binding Materials}"
                           SelectedItem="{Binding SelectedMaterial}"
                           AutoGenerateColumns="False"

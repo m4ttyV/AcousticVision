@@ -96,15 +96,26 @@
         </Border>
 
         <Border Grid.Row="2" Classes="card" ClipToBounds="True">
-    <Grid RowDefinitions="Auto,*"
-          RowSpacing="8">
-        <TextBlock Grid.Row="0"
-                   Text="Список тестовых моделей"
-                   FontWeight="Bold"/>
+            <Grid RowDefinitions="Auto,*"
+                  RowSpacing="8">
+                <StackPanel Grid.Row="0" Spacing="8">
+                    <TextBlock Text="Список тестовых моделей"
+                               FontWeight="Bold"/>
 
-        <DataGrid VerticalAlignment="Stretch" Grid.Row="1" ItemsSource="{Binding TestModels}"
+                    <Grid  ColumnSpacing="8">
+                        <TextBox 
+                                 Watermark="Поиск по помещению, источнику, приёмнику, координатам или методу"
+                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+
+                  
+                    </Grid>
+                </StackPanel>
+
+                <DataGrid Grid.Row="1"
+                          VerticalAlignment="Stretch"
+                          ItemsSource="{Binding TestModels}"
                           SelectedItem="{Binding SelectedTestModel}"
-                          AutoGenerateColumns="False" >
+                          AutoGenerateColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="70"/>
                         <DataGridTextColumn Header="Помещение" Binding="{Binding Room.Name}" Width="*"/>
@@ -115,8 +126,8 @@
                         <DataGridTextColumn Header="Метод" Binding="{Binding AnalysisMethodDisplayName}" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
-    </Grid>
-</Border>
+            </Grid>
+        </Border>
 
         <TextBlock Grid.Row="3"
                    Text="{Binding StatusMessage}"

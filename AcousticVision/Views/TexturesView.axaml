@@ -39,8 +39,6 @@
             <StackPanel Spacing="8">
                 <TextBlock Text="Изменение выбранной фактуры" FontWeight="Bold"/>
 
-                <TextBox Watermark="Поиск по названию или коэффициенту"
-                         Text="{Binding SearchText}"/>
 
                 <TextBox Watermark="Название фактуры"
                          Text="{Binding EditTextureName}"/>
@@ -59,13 +57,17 @@
         </Border>
 
         <Border Grid.Row="3" Classes="card" ClipToBounds="True">
-    <Grid RowDefinitions="Auto,*"
+    <Grid RowDefinitions="Auto,Auto,*"
           RowSpacing="8">
         <TextBlock Grid.Row="0"
                    Text="Список фактур"
                    FontWeight="Bold"/>
+        
+       <TextBox  Grid.Row="1"
+                Watermark="Поиск по названию или коэффициенту"
+                         Text="{Binding SearchText}"/>
 
-        <DataGrid VerticalAlignment="Stretch" Grid.Row="1" ItemsSource="{Binding Textures}"
+        <DataGrid VerticalAlignment="Stretch" Grid.Row="2" ItemsSource="{Binding Textures}"
                           SelectedItem="{Binding SelectedTexture}"
                           AutoGenerateColumns="False" >
                     <DataGrid.Columns>
