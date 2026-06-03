@@ -44,7 +44,7 @@
                 </ComboBox>
 
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                    <Button Classes="action" Content="Сохранить" Command="{Binding SaveSurfaceCommand}"/>
+                    <Button Classes="action" Content="Добавить" Command="{Binding SaveSurfaceCommand}"/>
                     <Button Classes="action" Content="Обновить список" Command="{Binding LoadSurfacesCommand}"/>
                     <Button Classes="action" Content="Удалить выбранную" Command="{Binding DeleteSelectedCommand}"/>
                 </StackPanel>
@@ -54,9 +54,17 @@
         <Border Grid.Row="2" Classes="card" ClipToBounds="True">
     <Grid RowDefinitions="Auto,*"
           RowSpacing="8">
-        <TextBlock Grid.Row="0"
-                   Text="Список поверхностей"
-                   FontWeight="Bold"/>
+        <StackPanel Grid.Row="0" Spacing="8">
+            <TextBlock Text="Список поверхностей"
+                       FontWeight="Bold"/>
+
+            <Grid >
+                <TextBox 
+                         Watermark="Поиск по помещению, позиции, материалу или фактуре"
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+
+            </Grid>
+        </StackPanel>
 
         <DataGrid VerticalAlignment="Stretch" Grid.Row="1" ItemsSource="{Binding Surfaces}" SelectedItem="{Binding SelectedSurface}" AutoGenerateColumns="False" >
                     <DataGrid.Columns>

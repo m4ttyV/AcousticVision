@@ -15,6 +15,7 @@ public partial class RoomSurfacesViewModel : ViewModelBase
     private readonly RoomModelService _roomModelService;
     private readonly MaterialService _materialService;
     private readonly TextureService _textureService;
+    private List<RoomSurface> _allSurfaces = new();
 
     [ObservableProperty] private ObservableCollection<RoomSurface> _surfaces = new();
     [ObservableProperty] private ObservableCollection<RoomModel> _rooms = new();
@@ -34,6 +35,7 @@ public partial class RoomSurfacesViewModel : ViewModelBase
     [ObservableProperty] private RoomModel? _selectedRoom;
     [ObservableProperty] private Material? _selectedMaterial;
     [ObservableProperty] private Texture? _selectedTexture;
+    [ObservableProperty] private string _searchText = string.Empty;
     [ObservableProperty] private string _statusMessage = string.Empty;
 
     public RoomSurfacesViewModel(RoomSurfaceService roomSurfaceService, RoomModelService roomModelService, MaterialService materialService, TextureService textureService)
@@ -73,10 +75,22 @@ public partial class RoomSurfacesViewModel : ViewModelBase
     {
         try
         {
-            Surfaces = new ObservableCollection<RoomSurface>((await _roomSurfaceService.GetAllAsync())
+            var selectedKey = SelectedSurface is null
+                ? null
+                : $"{SelectedSurface.RoomId}:{SelectedSurface.Position}";
+
+            var items = await _roomSurfaceService.GetAllAsync();
+            _allSurfaces = items
                 .OrderBy(x => x.Room != null ? x.Room.Name : string.Empty)
-                .ThenBy(x => x.Position));
-            StatusMessage = $"Загружено поверхностей: {Surfaces.Count}";
+                .ThenBy(x => x.Position)
+                .ToList();
+
+            ApplyFilter();
+
+            if (selectedKey is not null)
+                SelectedSurface = Surfaces.FirstOrDefault(x => $"{x.RoomId}:{x.Position}" == selectedKey);
+
+            StatusMessage = BuildLoadedMessage();
         }
         catch (Exception ex)
         {
@@ -120,6 +134,65 @@ public partial class RoomSurfacesViewModel : ViewModelBase
         {
             StatusMessage = $"Ошибка сохранения: {ex.Message}";
         }
+    }
+
+    [RelayCommand]
+    private void ClearSearch()
+    {
+        SearchText = string.Empty;
+        StatusMessage = BuildLoadedMessage();
+    }
+
+    partial void OnSearchTextChanged(string value)
+    {
+        var selectedKey = SelectedSurface is null
+            ? null
+            : $"{SelectedSurface.RoomId}:{SelectedSurface.Position}";
+
+        ApplyFilter();
+
+        if (selectedKey is not null)
+            SelectedSurface = Surfaces.FirstOrDefault(x => $"{x.RoomId}:{x.Position}" == selectedKey);
+
+        StatusMessage = BuildLoadedMessage();
+    }
+
+    private void ApplyFilter()
+    {
+        IEnumerable<RoomSurface> filtered = _allSurfaces;
+        var query = SearchText?.Trim();
+
+        if (!string.IsNullOrWhiteSpace(query))
+        {
+            filtered = filtered.Where(x =>
+                x.RoomId.ToString().Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                x.MaterialId.ToString().Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                x.TextureId.ToString().Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                x.Position.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                x.PositionDisplayName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                (x.Room?.Name?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (x.Material?.Name?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (x.Texture?.Name?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false));
+        }
+
+        Surfaces = new ObservableCollection<RoomSurface>(filtered);
+
+        if (SelectedSurface is not null)
+        {
+            var selectedRoomId = SelectedSurface.RoomId;
+            var selectedPosition = SelectedSurface.Position;
+            SelectedSurface = Surfaces.FirstOrDefault(x =>
+                x.RoomId == selectedRoomId &&
+                x.Position == selectedPosition);
+        }
+    }
+
+    private string BuildLoadedMessage()
+    {
+        if (string.IsNullOrWhiteSpace(SearchText))
+            return $"Загружено поверхностей: {Surfaces.Count}";
+
+        return $"Найдено поверхностей: {Surfaces.Count} из {_allSurfaces.Count}";
     }
 
     [RelayCommand]
