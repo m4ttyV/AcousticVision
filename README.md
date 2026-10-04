@@ -73,3 +73,7 @@ The main domain entities include rooms, surfaces, materials, textures, sound sou
 ### Test Model
 
 ![Test Model](AcousticVision/docs/screenshots/test-model.png)
+
+## License
+
+This project is licensed under the MIT License.
